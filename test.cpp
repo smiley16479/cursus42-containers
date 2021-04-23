@@ -1,4 +1,4 @@
-// access_specifiers_for_base_classes.cpp
+/* // access_specifiers_for_base_classes.cpp
 class BaseClass
 {
 public:
@@ -37,7 +37,7 @@ int main()
     derived_class1.PublicFunc();
     derived_class2.PublicFunc(); // function is inaccessible
 }
-
+ */
 
 // access_control.cpp
 class Base
@@ -45,11 +45,19 @@ class Base
 public:
     int Print();             // Nonstatic member.
     static int CountOf();    // Static member.
+    typedef unsigned int cacahuette;
 };
+
+int Base::CountOf()
+{
+    return 2;
+}
 
 // Derived1 declares Base as a private base class.
 class Derived1 : private Base
 {
+    public : 
+    Base::cacahuette i;
 };
 // Derived2 declares Derived1 as a public base class.
 class Derived2 : public Derived1
@@ -61,10 +69,13 @@ int Derived2::ShowCount()
 {
    // Call static member function CountOf explicitly.
     int cCount = Base::CountOf();     // OK.
-
    // Call static member function CountOf using pointer.
     cCount = this->CountOf();  // C2247. Conversion of
                                //  Derived2 * to Base * not
                                //  permitted.
     return cCount;
+}
+int main()
+{
+
 }
