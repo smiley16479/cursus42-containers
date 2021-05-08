@@ -5,7 +5,7 @@
 // #include </usr/include/c++/6/bits/stl_iterator_base_types.h>
 // #include </usr/include/c++/6/bits/stl_algobase.h>
 
-#define vAddedMem 16
+#define vAddedMem 16 // better when power of 2
 
 #define _DEBUG_
 #ifdef _DEBUG_
@@ -21,6 +21,7 @@ namespace ft {
 			_T *_tab;
 			unsigned int _size;
 			unsigned int _Rsize; // real_size
+			unsigned int _Zindx; // Zero index où le vector commence pour améliorer l'insertion (par défault au 1/4 du define vAddedMem)
 			_Alloc& _allocator;
 			// vector::size_type i;
 
@@ -55,11 +56,13 @@ namespace ft {
 		// bool empty() const; //Test whether vector is empty
 		// void reserve (size_type n); // Request a change in capacity.Requests that the vector capacity be at least enough to contain n elements.
 
-		// reference	operator[] (size_type n)
+	// ELEMENT ACCESS
+		// reference	operator[] (size_type n);
+		// const_reference operator[] (size_type n) const;
 
 	// Default Constructor
 	explicit vector(const allocator_type& alloc = allocator_type())
-	: _size(0), _Rsize(vAddedMem), _allocator(const_cast<allocator_type&>(alloc))
+	: _size(0), _Rsize(vAddedMem), _Zindx(vAddedMem / 4), _allocator(const_cast<allocator_type&>(alloc))
 	{
 		#ifdef _DEBUG_
 		std::cout << "vector Default Constructor called" << std::endl;
@@ -70,6 +73,7 @@ namespace ft {
 	explicit vector (size_type n, const value_type& val, const allocator_type& alloc = allocator_type())
 	: _size(n),
 	_Rsize(_size * 1.5 >= vAddedMem ? _size * 1.5 : vAddedMem),
+	_Zindx(vAddedMem / 4),
 	_allocator(const_cast<allocator_type&>(alloc))
 	{
 		#ifdef _DEBUG_
@@ -84,6 +88,7 @@ namespace ft {
 	vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
 	: _size(last - first),
 	_Rsize(_size * 1.5 >= vAddedMem ? _size * 1.5 : vAddedMem),
+	_Zindx(vAddedMem / 4),
 	_allocator(const_cast<allocator_type&>(alloc))
 	{
 		#ifdef _DEBUG_
@@ -99,9 +104,10 @@ namespace ft {
 		std::cout << "vector Assignment operator called" << std::endl;
 		#endif
 		if ( this != &x ) {
-			ft::vector<_T, _Alloc >::~vector(); // cannot use "delete this;" bcoz new wasn't use also it is used by the std::allocator
+			ft::vector<_T, _Alloc >::~vector(); // cannot use "delete this;" bcoz new wasn't use eventhought it is used by the std::allocator
  			_size = x._size;
 			_Rsize = x._Rsize;
+			_Zindx = x._Zindx;
 			_allocator = x._allocator;
 			_tab = _allocator.allocate(_Rsize);
 			for (size_t i = 0; i < x._size; i++)
@@ -116,11 +122,13 @@ namespace ft {
 		std::cout << "vector Destructor called" << std::endl;
 		#endif
 		for (size_t i = 0; i < _size; i++)
-			_allocator.destroy(&_tab[i]);
+			_allocator.destroy(&_tab[i + _Zindx]);
 		_allocator.deallocate(_tab, _Rsize);
 	}
 
-	size_type	size(void) const {	return _size;}
+	/* Capacity: */
+
+	size_type	size(void) const {return _size;}
 
 	size_type	max_size(void) const
 	{
@@ -139,17 +147,14 @@ namespace ft {
 	{
 		if (n < _size) {
 			for (size_t i = n; i < _size; i++)
-				_allocator.destroy(&_tab[i]);
+				_allocator.destroy(&_tab[i + _Zindx]);
 			_size = n;
 		}
 		else {
-			if (n > _Rsize) {
-				_T* tmpTab_ = _allocator.allocate(n + vAddedMem);	
-				for (size_t i = 0; i < _size; i++)
-					tmpTab_[i] = _tab[i];
-				_allocator.construct(tmpTab_, val);
-			}
-				
+			reserve(n);
+			for (size_t i = _size + _Zindx; i < n; ++i)
+				_allocator.construct(&_tab[i + _Zindx], val);
+			_size = n;
 		}
 	}
 
@@ -161,23 +166,25 @@ namespace ft {
 	{
 		size_type maxSize = max_size();
 		if ( n > maxSize )
-			throw std::length_error ("_M_fill_insert");
+			throw std::length_error ("_M_fill_insert_(reserve)");
 		if ( n > _Rsize ) {
 			size_t capacity = ( n + vAddedMem <= maxSize ) ? n + vAddedMem : n;
 			_T* tmpTab_ = _allocator.allocate(capacity);
-			for (size_t i = 0; i < _size; i++)
-				tmpTab_[i] = _tab[i];
-			ft::vector<_T, _Alloc >::~vector(); // cannot use "delete this;" bcoz new wasn't use also it is used by the std::allocator
+			for (size_t i = 0; i < _size; ++i)
+				tmpTab_[i + _Zindx + vAddedMem / 4] = _tab[i + _Zindx];
+			ft::vector<_T, _Alloc >::~vector(); // cannot use "delete this;" bcoz new wasn't use eventhought it is used by the std::allocator
+			_Zindx += vAddedMem / 4;
 			_Rsize = capacity;
 			_tab = tmpTab_;
 		}
 		return;
 	}
 
-	reference	operator[] (size_type n)
-	{
-		return (_tab[n]);
-	}
+	/* Element access: */
+
+	reference	operator[] (size_type n) {return (_tab[n + _Zindx]);}
+
+	const_reference operator[] (size_type n) const {return (_tab[n + _Zindx]);}
 
 };
 }
