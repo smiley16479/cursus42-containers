@@ -59,6 +59,8 @@ namespace ft {
 	// ELEMENT ACCESS
 		// reference	operator[] (size_type n);
 		// const_reference operator[] (size_type n) const;
+		// reference at (size_type n);
+		// const_reference at (size_type n) const;
 
 	// Default Constructor
 	explicit vector(const allocator_type& alloc = allocator_type())
@@ -81,7 +83,7 @@ namespace ft {
 		#endif
 		_tab = _allocator.allocate(_Rsize);
 		for (size_t i = 0; i < _size; i++)
-			_tab[i] = val; // new(&_tab[i]) _T(val); appelle le constructeur voir exemple 3 https://www.cplusplus.com/reference/new/operator%20new/
+			_tab[i + _Zindx] = val; // new(&_tab[i]) _T(val); appelle le constructeur voir exemple 3 https://www.cplusplus.com/reference/new/operator%20new/
 	} 
 
 	template <class InputIterator>
@@ -111,7 +113,7 @@ namespace ft {
 			_allocator = x._allocator;
 			_tab = _allocator.allocate(_Rsize);
 			for (size_t i = 0; i < x._size; i++)
-				new (&_tab[i]) _T(x._tab[i]);
+				new (&_tab[i + _Zindx]) _T(x._tab[i + x._Zindx]);
 		}
 		return *this;
 	}
@@ -145,6 +147,9 @@ namespace ft {
 // Notice that this function changes the actual content of the container by inserting or erasing elements from it.
 	void		resize(size_type n, value_type val = value_type())
 	{
+		#ifdef _DEBUG_
+			std::cout << "_size : " << _size << ", _Zindx : " << _Zindx << ", n : " << n << std::endl;
+		#endif
 		if (n < _size) {
 			for (size_t i = n; i < _size; i++)
 				_allocator.destroy(&_tab[i + _Zindx]);
@@ -168,6 +173,9 @@ namespace ft {
 		if ( n > maxSize )
 			throw std::length_error ("_M_fill_insert_(reserve)");
 		if ( n > _Rsize ) {
+			#ifdef _DEBUG_
+			std::cout << "_size : " << _size << "_Zindx : " << _Zindx << "n : " << n << std::endl;
+			#endif
 			size_t capacity = ( n + vAddedMem <= maxSize ) ? n + vAddedMem : n;
 			_T* tmpTab_ = _allocator.allocate(capacity);
 			for (size_t i = 0; i < _size; ++i)
@@ -185,6 +193,14 @@ namespace ft {
 	reference	operator[] (size_type n) {return (_tab[n + _Zindx]);}
 
 	const_reference operator[] (size_type n) const {return (_tab[n + _Zindx]);}
+
+// Returns a reference to the element at position n in the vector.
+// The function automatically checks whether n is within the bounds of valid elements in the vector,
+// throwing an out_of_range exception if it is not (i.e., if n is greater than, or equal to, its size).
+// This is in contrast with member operator[], that does not check against bounds.
+	reference at (size_type n) {if (n >= _size) throw std::out_of_range ("vector::_M_range_check\n"); else return (_tab[n + _Zindx]);}
+	
+	const_reference at (size_type n) const {if (n >= _size) throw std::out_of_range ("vector::_M_range_check\n"); else return (_tab[n + _Zindx]);}
 
 };
 }

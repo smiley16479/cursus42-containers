@@ -17,7 +17,7 @@ public:
 private:
 
 	int _nb;
-	int _nb1;
+	// int _nb1;
 
 };
 
