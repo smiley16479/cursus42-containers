@@ -35,12 +35,39 @@ namespace ft {
 		typedef	const _T&		  const_reference;		//	Reference to constant element
 		typedef size_t			  size_type;			//	Quantities of elements
 		typedef	ptrdiff_t		  difference_type;		//	Difference between two pointers
+
+
+   struct Iterator // https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp
+    {
+        using iterator_category = std::forward_iterator_tag;
+        using difference_type   = std::ptrdiff_t;
+        using value_type        = int;
+        using pointer           = int*;
+        using reference         = int&;
+
+        Iterator(pointer ptr) : m_ptr(ptr) {}
+
+        reference operator*() const { return *m_ptr; }
+        pointer operator->() { return m_ptr; }
+        Iterator& operator++() { m_ptr++; return *this; }  
+        Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
+        friend bool operator== (const Iterator& a, const Iterator& b) { return a.m_ptr == b.m_ptr; };
+        friend bool operator!= (const Iterator& a, const Iterator& b) { return a.m_ptr != b.m_ptr; };  
+
+    private:
+        pointer m_ptr;
+    };
+
+
+		typedef value_type							iterator; // a random access iterator to value_type	convertible to const_iterator
+		typedef const value_type					const_iterator; //	a random access iterator to const value_type	
+		typedef reverse_iterator<iterator>			reverse_iterator;
+		typedef reverse_iterator<const_iterator>	const_reverse_iterator;
 		// typedef std::reverse_iterator<iterator>		  reverse_iterator;
 		// typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-
-//Implemented method or
-// //NON implemented method
+//Implemented method and // //NON implemented method
+	//  CONSTRUCTORS
 		// explicit vector (const allocator_type& alloc = allocator_type()); //default (1)	
 		// explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()); //fill (2)
 		// // template <class InputIterator> vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()); //range (3)
@@ -61,6 +88,14 @@ namespace ft {
 		// const_reference operator[] (size_type n) const;
 		// reference at (size_type n);
 		// const_reference at (size_type n) const;
+		// reference front();
+		// const_reference front() const;
+		// reference back();
+		// const_reference back() const;
+
+	// MODIFIERS
+		// template <class InputIterator>  void assign (InputIterator first, InputIterator last); //range (1)
+		// void assign (size_type n, const value_type& val); //fill (2)
 
 	// Default Constructor
 	explicit vector(const allocator_type& alloc = allocator_type())
@@ -191,16 +226,37 @@ namespace ft {
 	/* Element access: */
 
 	reference	operator[] (size_type n) {return (_tab[n + _Zindx]);}
-
 	const_reference operator[] (size_type n) const {return (_tab[n + _Zindx]);}
-
 // Returns a reference to the element at position n in the vector.
 // The function automatically checks whether n is within the bounds of valid elements in the vector,
 // throwing an out_of_range exception if it is not (i.e., if n is greater than, or equal to, its size).
 // This is in contrast with member operator[], that does not check against bounds.
 	reference at (size_type n) {if (n >= _size) throw std::out_of_range ("vector::_M_range_check\n"); else return (_tab[n + _Zindx]);}
-	
 	const_reference at (size_type n) const {if (n >= _size) throw std::out_of_range ("vector::_M_range_check\n"); else return (_tab[n + _Zindx]);}
+// Access first element
+// Returns a reference to the first element in the vector.
+// Unlike member vector::begin, which returns an iterator to this same element, this function returns a direct reference.
+// Calling this function on an empty container causes undefined behavior.
+	reference front() {return (_tab[_Zindx]);};
+	const_reference front() const {return (_tab[_Zindx]);};
+// Access last element
+// Returns a reference to the last element in the vector.
+// Unlike member vector::end, which returns an iterator just past this element, this function returns a direct reference.
+// Calling this function on an empty container causes undefined behavior.
+	reference back() {return (_tab[_size + _Zindx]);};
+	const_reference back() const {return (_tab[_size + _Zindx]);};
+
+	/* MODIFIERS */
+
+// Assign vector content
+// Assigns new contents to the vector, replacing its current contents, and modifying its size accordingly.
+// In the range version (1), the new contents are elements constructed from each of the elements in the range between first and last, in the same order.
+// In the fill version (2), the new contents are n elements, each initialized to a copy of val.
+// If a reallocation happens,the storage needed is allocated using the internal allocator.
+	template <class InputIterator>
+	void assign (InputIterator first, InputIterator last);
+	
+	void assign (size_type n, const value_type& val);
 
 };
 }
