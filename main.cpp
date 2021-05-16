@@ -23,6 +23,16 @@ int main()
 	// ft::vector<ClassTest> vect(2, 8); // not implemented yet
 	// vec = vect;
 
+	std::cout << YELLOW "Correction Iterator" RESET << std::endl;
+
+	// for (auto i : vec)
+	// 	std::cout << i << "\n";
+
+	for (auto it = vec.begin(), end = vec.end(); it != end; ++it) { 
+		const auto i = *it; 
+		std::cout << i << "\n";
+	}
+
 	std::cout << YELLOW "Correction de resize()" RESET << std::endl;
 	vec.resize(1);
 	std::cout << YELLOW "Correction de operator[]" RESET << std::endl;

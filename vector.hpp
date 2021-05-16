@@ -36,21 +36,20 @@ namespace ft {
 		typedef size_t			  size_type;			//	Quantities of elements
 		typedef	ptrdiff_t		  difference_type;		//	Difference between two pointers
 
-
    struct Iterator // https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp
     {
         using iterator_category = std::forward_iterator_tag;
         using difference_type   = std::ptrdiff_t;
-        using value_type        = int;
-        using pointer           = int*;
-        using reference         = int&;
+        using value_type        = _T;
+        using pointer           = _T*;
+        using reference         = _T&;
 
         Iterator(pointer ptr) : m_ptr(ptr) {}
 
         reference operator*() const { return *m_ptr; }
         pointer operator->() { return m_ptr; }
         Iterator& operator++() { m_ptr++; return *this; }  
-        Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
+        Iterator operator++(_T) { Iterator tmp = *this; ++(*this); return tmp; }
         friend bool operator== (const Iterator& a, const Iterator& b) { return a.m_ptr == b.m_ptr; };
         friend bool operator!= (const Iterator& a, const Iterator& b) { return a.m_ptr != b.m_ptr; };  
 
@@ -58,11 +57,13 @@ namespace ft {
         pointer m_ptr;
     };
 
+	Iterator begin() { return Iterator(&_tab[0]); }
+	Iterator end()   { return Iterator(&_tab[_Zindx + _size]); }
 
-		typedef value_type							iterator; // a random access iterator to value_type	convertible to const_iterator
-		typedef const value_type					const_iterator; //	a random access iterator to const value_type	
-		typedef reverse_iterator<iterator>			reverse_iterator;
-		typedef reverse_iterator<const_iterator>	const_reverse_iterator;
+		// typedef value_type							iterator; // a random access iterator to value_type	convertible to const_iterator
+		// typedef const value_type					const_iterator; //	a random access iterator to const value_type	
+		// typedef reverse_iterator<iterator>			reverse_iterator;
+		// typedef reverse_iterator<const_iterator>	const_reverse_iterator;
 		// typedef std::reverse_iterator<iterator>		  reverse_iterator;
 		// typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
@@ -162,6 +163,8 @@ namespace ft {
 			_allocator.destroy(&_tab[i + _Zindx]);
 		_allocator.deallocate(_tab, _Rsize);
 	}
+
+	/* Iterators: */
 
 	/* Capacity: */
 
