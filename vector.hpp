@@ -36,30 +36,37 @@ namespace ft {
 		typedef size_t			  size_type;			//	Quantities of elements
 		typedef	ptrdiff_t		  difference_type;		//	Difference between two pointers
 
-   struct Iterator // https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp
+   struct iterator // https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp
     {
-        using iterator_category = std::forward_iterator_tag;
-        using difference_type   = std::ptrdiff_t;
-        using value_type        = _T;
-        using pointer           = _T*;
-        using reference         = _T&;
+		typedef std::forward_iterator_tag	iterator_category;
 
-        Iterator(pointer ptr) : m_ptr(ptr) {}
+        iterator(pointer ptr) : m_ptr(ptr) {}
 
         reference operator*() const { return *m_ptr; }
         pointer operator->() { return m_ptr; }
-        Iterator& operator++() { m_ptr++; return *this; }  
-        Iterator operator++(_T) { Iterator tmp = *this; ++(*this); return tmp; }
-        friend bool operator== (const Iterator& a, const Iterator& b) { return a.m_ptr == b.m_ptr; };
-        friend bool operator!= (const Iterator& a, const Iterator& b) { return a.m_ptr != b.m_ptr; };  
+        iterator& operator++() { m_ptr++; return *this; }
+        iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+        friend bool operator== (const iterator& a, const iterator& b) { return a.m_ptr == b.m_ptr; };
+        friend bool operator!= (const iterator& a, const iterator& b) { return a.m_ptr != b.m_ptr; };
 
     private:
         pointer m_ptr;
     };
 
-	Iterator begin() { return Iterator(&_tab[0]); }
-	Iterator end()   { return Iterator(&_tab[_Zindx + _size]); }
+		typedef iterator	  	  reverse_iterator;
+		typedef const iterator	  const_iterator;
+		typedef const_iterator	  const_reverse_iterator;
 
+	iterator begin() { return iterator(&_tab[_Zindx]); }
+	const_iterator begin() const { return iterator(&_tab[_Zindx]); }
+	iterator end()   { return iterator(&_tab[_Zindx + _size]); }
+	const_iterator end() const { return iterator(&_tab[_Zindx + _size]); }
+	reverse_iterator rbegin() { return iterator(&_tab[_Zindx + _size]); }
+	const_reverse_iterator rbegin() const { return iterator(&_tab[_Zindx + _size]); }
+	reverse_iterator rend() { return iterator(&_tab[_Zindx]); }
+	const_reverse_iterator rend() const { return iterator(&_tab[_Zindx]); }
+
+/* List Des 
 		// typedef value_type							iterator; // a random access iterator to value_type	convertible to const_iterator
 		// typedef const value_type					const_iterator; //	a random access iterator to const value_type	
 		// typedef reverse_iterator<iterator>			reverse_iterator;
@@ -71,7 +78,7 @@ namespace ft {
 	//  CONSTRUCTORS
 		// explicit vector (const allocator_type& alloc = allocator_type()); //default (1)	
 		// explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()); //fill (2)
-		// // template <class InputIterator> vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()); //range (3)
+		// // template <class InputIterator> vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()); //range (3) 🔥
 		// vector (const vector& x); // copy (4)
 		// vector& operator=(const vector& x) throw ()
 		// ~vector();
@@ -95,8 +102,25 @@ namespace ft {
 		// const_reference back() const;
 
 	// MODIFIERS
-		// template <class InputIterator>  void assign (InputIterator first, InputIterator last); //range (1)
-		// void assign (size_type n, const value_type& val); //fill (2)
+		// // template <class InputIterator>  void assign (InputIterator first, InputIterator last); //range (1) 🔥
+		// // void assign (size_type n, const value_type& val); //fill (2) 🔥
+		// void push_back (const value_type& val);
+		// void pop_back();
+		// iterator insert (iterator position, const value_type& val); // single element (1)	
+    	// void insert (iterator position, size_type n, const value_type& val); // fill (2)
+		// template <class InputIterator> void insert (iterator position, InputIterator first, InputIterator last); //range (3)
+		// iterator erase (iterator position);
+		// iterator erase (iterator first, iterator last);
+		// void swap (vector& x);
+		// void clear();
+
+	// ALLOCATOR
+		// allocator_type get_allocator() const; // Returns a copy of the allocator object associated with the vector.
+
+	// NON-MEMBER FUNCTION OVERLOADS
+
+	// TEMPLATE SPECIALIZATIONS
+ */
 
 	// Default Constructor
 	explicit vector(const allocator_type& alloc = allocator_type())
@@ -261,5 +285,43 @@ namespace ft {
 	
 	void assign (size_type n, const value_type& val);
 
+	void push_back (const value_type& val) {
+		reserve(_size + 1);
+		_tab[_Zindx + _size++] = val;
+	}
+// Removes the last element in the vector, effectively reducing the container size by one. This destroys the removed element.
+	void pop_back() {
+		if (!empty())
+			_allocator.destroy(&_tab[_Zindx + --_size]);
+	}
+
+	iterator insert (iterator position, const value_type& val) {
+		ptrdiff_t ptr_diff = position - begin();
+		value_type cpy_ = *position;
+		*position++ = val;
+		if (ptr_diff > _size / 2) {
+			if (_Rsize - _Zindx - _size > 0) {
+				iterator end_ = end();
+				while (position != end_)
+				{
+					*position++ = cpy_;
+					cpy_ = *position;
+				}
+			}
+		}
+		else {
+			if (_Zindx >= 0)
+				iterator begin_ = begin();
+			while (position != begin_)
+			{
+				*position-- = cpy_;
+				cpy_ = *position;
+			}
+			*position = cpy_;
+		}
+	}
+
 };
 }
+
+// |.............v....|..................|

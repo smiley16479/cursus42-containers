@@ -28,16 +28,14 @@ int main()
 	// for (auto i : vec)
 	// 	std::cout << i << "\n";
 
-	for (auto it = vec.begin(), end = vec.end(); it != end; ++it) { 
-		const auto i = *it; 
-		std::cout << i << "\n";
-	}
+	// for (ft::vector<ClassTest>::Iterator it = vec.begin(), end = vec.end(); it != end; ++it)
+	// 	std::cout << *it << "\n";
 
-	std::cout << YELLOW "Correction de resize()" RESET << std::endl;
-	vec.resize(1);
-	std::cout << YELLOW "Correction de operator[]" RESET << std::endl;
-	for (size_t i = 0; i < vec.size(); i++)
-		std::cout << vec[i].getNb() << std::endl;
+	// std::cout << YELLOW "Correction de resize()" RESET << std::endl;
+	// vec.resize(1);
+	// std::cout << YELLOW "Correction de operator[]" RESET << std::endl;
+	// for (size_t i = 0; i < vec.size(); i++)
+	// 	std::cout << vec[i].getNb() << std::endl;
 
 	std::cout << YELLOW "Correction de at" RESET << std::endl;
 	try
@@ -48,11 +46,20 @@ int main()
 	{
 		std::cerr << e.what() << '\n';
 	}
-	
 
 	std::cout << YELLOW "Correction de max_size()" RESET << std::endl;
 	std::cout << "vec.max_size() : " << vec.max_size() << std::endl;
 	// vec.getNb();
+	std::cout << YELLOW "Correction de push_back()" RESET << std::endl;
+	ClassTest b(5);
+	vec.push_back(b);
+	for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
+		std::cout << *it << "\n";
+
+	std::cout << YELLOW "Correction de pop()" RESET << std::endl;
+	vec.pop_back();
+	for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
+		std::cout << *it << "\n";
 
 	std::cout << GREEN "Vecteur officiel" RESET << std::endl;
 
