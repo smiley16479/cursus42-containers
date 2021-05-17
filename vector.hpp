@@ -40,17 +40,23 @@ namespace ft {
     {
 		typedef std::forward_iterator_tag	iterator_category;
 
-        iterator(pointer ptr) : m_ptr(ptr) {}
+        iterator(pointer ptr) : _ptr(ptr) {}
+        // iterator(iterator const & ptr) : _ptr(ptr._ptr) {}
 
-        reference operator*() const { return *m_ptr; }
-        pointer operator->() { return m_ptr; }
-        iterator& operator++() { m_ptr++; return *this; }
+		size_t getPtr() const { return _ptr; }
+        reference operator*() const { return *_ptr; }
+        pointer operator->() { return _ptr; }
+        iterator& operator++() { _ptr++; return *this; }
         iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
-        friend bool operator== (const iterator& a, const iterator& b) { return a.m_ptr == b.m_ptr; };
-        friend bool operator!= (const iterator& a, const iterator& b) { return a.m_ptr != b.m_ptr; };
+		iterator& operator--() { _ptr--; return *this; }
+        iterator operator--(int) { iterator tmp = *this; --(*this); return tmp; }
+		iterator& operator-=( iterator & i ) {_ptr -= (size_t)i._ptr; return *this;}
+        iterator operator-( iterator & i ) {iterator copie(_ptr); copie -= i; return (copie);}
+        friend bool operator== (const iterator& a, const iterator& b) { return a._ptr == b._ptr; };
+        friend bool operator!= (const iterator& a, const iterator& b) { return a._ptr != b._ptr; };
 
     private:
-        pointer m_ptr;
+        pointer _ptr;
     };
 
 		typedef iterator	  	  reverse_iterator;
@@ -296,10 +302,14 @@ namespace ft {
 	}
 
 	iterator insert (iterator position, const value_type& val) {
-		ptrdiff_t ptr_diff = position - begin();
+		// ptrdiff_t ptr_diff = position - begin();
+		iterator begin_ = begin();
+		iterator ptr_diff = position - begin_;
 		value_type cpy_ = *position;
+		std::cout << "valutye est egal a : " << cpy_ << std::endl;
 		*position++ = val;
-		if (ptr_diff > _size / 2) {
+		if (ptr_diff.getPtr() > reinterpret_cast<pointer>(_size / 2)) {
+			std::cout << "ici\n";
 			if (_Rsize - _Zindx - _size > 0) {
 				iterator end_ = end();
 				while (position != end_)
@@ -310,18 +320,32 @@ namespace ft {
 			}
 		}
 		else {
-			if (_Zindx >= 0)
+			if (_Zindx >= 0) {
+				std::cout << "la\n";
 				iterator begin_ = begin();
-			while (position != begin_)
-			{
-				*position-- = cpy_;
-				cpy_ = *position;
+				while (position != begin_)
+				{
+					*position-- = cpy_;
+					cpy_ = *position;
+				}
+				*position = cpy_;
 			}
-			*position = cpy_;
 		}
+		// ++_size;
+		return (position);
 	}
+	// std::ostream & operator<<(std::ostream & o, ft::vector<_T, _Alloc>::iterator const & i) { o << i.getPtr(); return o;}
 
-};
-}
+}; // Fin de la classe vector
+
+template <typename _T, typename _Alloc>
+	std::ostream & operator<<(std::ostream & o, typename vector<_T, _Alloc>::iterator const & i) { o << i.getPtr(); return o;}
+
+// template <typename _T, typename _Alloc>
+// 	std::ostream & vector<_T, _Alloc>::iterator::operator<<(std::ostream & o, ft::vector<_T, _Alloc>::iterator const & i) { o << i.getPtr(); return o;}
+
+} // Fin du namespace ft
+
+
 
 // |.............v....|..................|

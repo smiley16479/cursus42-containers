@@ -35,6 +35,7 @@ ClassTest::ClassTest( void ) : _nb( 0 )
 ClassTest::ClassTest( int const n ) : _nb( n )
 {
 	std::cout << "ClassTest Parametric Constructor called" << std::endl;
+	// std::cout << *this << std::endl;
 	return ;
 }
 

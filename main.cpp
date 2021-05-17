@@ -56,20 +56,28 @@ int main()
 	for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
 		std::cout << *it << "\n";
 
-	std::cout << YELLOW "Correction de pop()" RESET << std::endl;
-	vec.pop_back();
+	// std::cout << YELLOW "Correction de pop()" RESET << std::endl;
+	// vec.pop_back();
+	// for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
+	// 	std::cout << *it << "\n";
+
+	std::cout << YELLOW "Correction de insert()" RESET << std::endl;
+	ft::vector<ClassTest>::iterator it = vec.begin();
+	++it;
+	std::cout << it << std::endl;
+	vec.insert(++it, b);
 	for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
 		std::cout << *it << "\n";
 
-	std::cout << GREEN "Vecteur officiel" RESET << std::endl;
+/*	std::cout << GREEN "Vecteur officiel" RESET << std::endl;
 
-	std::vector<ClassTest> vec1(2, 8);
+ 	std::vector<ClassTest> vec1(2, 8);
 	std::cout << vec1[0].getNb() << std::endl;
 	std::cout << vec1[1].getNb() << std::endl;
 	// vec1.push_back(2);
 	std::cout << "vec.max_size() : " << vec1.max_size() << std::endl;
 	// std::cout << vec1.size() << std::endl;
-	// std::cout << vec1.capacity() << std::endl;
+	// std::cout << vec1.capacity() << std::endl; */
 	return 0;
 }
 
