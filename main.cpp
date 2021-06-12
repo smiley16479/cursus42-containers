@@ -23,7 +23,7 @@ int main()
 	// ft::vector<ClassTest> vect(2, 8); // not implemented yet
 	// vec = vect;
 
-	std::cout << YELLOW "Correction Iterator" RESET << std::endl;
+	// std::cout << YELLOW "Correction Iterator" RESET << std::endl;
 
 	// for (auto i : vec)
 	// 	std::cout << i << "\n";
@@ -37,15 +37,15 @@ int main()
 	// for (size_t i = 0; i < vec.size(); i++)
 	// 	std::cout << vec[i].getNb() << std::endl;
 
-	std::cout << YELLOW "Correction de at" RESET << std::endl;
-	try
-	{
-		vec.at(3);
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	// std::cout << YELLOW "Correction de at" RESET << std::endl;
+	// try
+	// {
+	// 	vec.at(3);
+	// }
+	// catch(const std::exception& e)
+	// {
+	// 	std::cerr << e.what() << '\n';
+	// }
 
 	std::cout << YELLOW "Correction de max_size()" RESET << std::endl;
 	std::cout << "vec.max_size() : " << vec.max_size() << std::endl;
@@ -62,13 +62,21 @@ int main()
 	// 	std::cout << *it << "\n";
 
 	std::cout << YELLOW "Correction de insert()" RESET << std::endl;
+	std::cout << GREEN "_Rsize : " RESET << vec.capacity() << std::endl;
 	ft::vector<ClassTest>::iterator it = vec.begin();
 	++it;
-	std::cout << it << std::endl;
-	vec.insert(++it, b);
+	// std::cout << "test \n" << it << std::endl;
+	vec.insert(++it, 4);
 	for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
 		std::cout << *it << "\n";
-
+	it = vec.begin();
+	vec.insert(++it, 4);
+	for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
+		std::cout << *it << "\n";
+	it = vec.begin();
+	vec.insert(it, 4, 2);
+	for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
+		std::cout << *it << "\n";
 /*	std::cout << GREEN "Vecteur officiel" RESET << std::endl;
 
  	std::vector<ClassTest> vec1(2, 8);

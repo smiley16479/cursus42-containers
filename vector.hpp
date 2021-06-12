@@ -43,12 +43,12 @@ namespace ft {
         iterator(pointer ptr) : _ptr(ptr) {}
         // iterator(iterator const & ptr) : _ptr(ptr._ptr) {}
 
-		size_t getPtr() const { return _ptr; }
+		pointer getPtr() const { return _ptr; }
         reference operator*() const { return *_ptr; }
         pointer operator->() { return _ptr; }
-        iterator& operator++() { _ptr++; return *this; }
+        iterator& operator++() { ++_ptr; return *this; }
         iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
-		iterator& operator--() { _ptr--; return *this; }
+		iterator& operator--() { --_ptr; return *this; }
         iterator operator--(int) { iterator tmp = *this; --(*this); return tmp; }
 		iterator& operator-=( iterator & i ) {_ptr -= (size_t)i._ptr; return *this;}
         iterator operator-( iterator & i ) {iterator copie(_ptr); copie -= i; return (copie);}
@@ -235,6 +235,11 @@ namespace ft {
 
 	bool empty() const { return (_size ? false : true); }
 
+// Request a change in capacity, Requests that the vector capacity be at least enough to contain n elements.
+// If n is greater than the current vector capacity, the function causes the container to reallocate its 
+// storage increasing its capacity to n (or greater). In all other cases, the function call does not cause
+// a reallocation and the vector capacity is not affected.
+// This function has no effect on the vector size and cannot alter its elements.
 	void reserve (size_type n)
 	{
 		size_type maxSize = max_size();
@@ -242,7 +247,7 @@ namespace ft {
 			throw std::length_error ("_M_fill_insert_(reserve)");
 		if ( n > _Rsize ) {
 			#ifdef _DEBUG_
-			std::cout << "_size : " << _size << "_Zindx : " << _Zindx << "n : " << n << std::endl;
+			std::cout << "_size : " << _size << " _Zindx : " << _Zindx << " n : " << n << std::endl;
 			#endif
 			size_t capacity = ( n + vAddedMem <= maxSize ) ? n + vAddedMem : n;
 			_T* tmpTab_ = _allocator.allocate(capacity);
@@ -301,45 +306,87 @@ namespace ft {
 			_allocator.destroy(&_tab[_Zindx + --_size]);
 	}
 
+// Insert elements
+// The vector is extended by inserting new elements before the element at the specified position,
+// effectively increasing the container size by the number of elements inserted.
+// This causes an automatic reallocation of the allocated storage space if -and only if- the new vector 
+// size surpasses the current vector capacity.
+// Because vectors use an array as their underlying storage, inserting elements in positions other than
+// the vector end causes the container to relocate all the elements that were after position to their new
+// positions. This is generally an inefficient operation compared to the one performed for the same
+// operation by other kinds of sequence containers (such as list or forward_list).
+// The parameters determine how many elements are inserted and to which values they are initialized:
 	iterator insert (iterator position, const value_type& val) {
-		// ptrdiff_t ptr_diff = position - begin();
+		ptrdiff_t ptr_diff = position.getPtr() - begin().getPtr();
+		value_type cpy_1, cpy_2;
+		size_t even(0);
 		iterator begin_ = begin();
-		iterator ptr_diff = position - begin_;
-		value_type cpy_ = *position;
-		std::cout << "valutye est egal a : " << cpy_ << std::endl;
-		*position++ = val;
-		if (ptr_diff.getPtr() > reinterpret_cast<pointer>(_size / 2)) {
-			std::cout << "ici\n";
-			if (_Rsize - _Zindx - _size > 0) {
-				iterator end_ = end();
-				while (position != end_)
+		iterator position_to_return = position;
+		#ifdef _DEBUG_
+		std::cout << "ptr_diff : " << ptr_diff << " position - begin_ :"
+		<< position.getPtr() << " - " << begin_.getPtr() << " size" << _size << std::endl;
+		#endif
+		if (ptr_diff > _size / 2) {
+			if (_Rsize - _Zindx - _size <= 0) 
+				reserve(_Rsize + 1);
+			cpy_1 = *position;
+			*position = val;
+			++_size;
+			iterator end_ = end();
+			while (position != end_)
+			{
+				++position;
+				if (++even % 2) {
+					cpy_2 = *position;
+					*position = cpy_1;
+				}
+				else
 				{
-					*position++ = cpy_;
-					cpy_ = *position;
+					cpy_1 = *position;
+					*position = cpy_2;
 				}
 			}
 		}
 		else {
-			if (_Zindx >= 0) {
-				std::cout << "la\n";
-				iterator begin_ = begin();
-				while (position != begin_)
-				{
-					*position-- = cpy_;
-					cpy_ = *position;
+			if (_Zindx == 0) 
+				reserve(_Rsize + 1);
+			--_Zindx;
+			++_size;
+			if (position == begin_) {
+				_tab[_Zindx] = val;
+				return (position);
+			}
+			begin_ = begin();
+			cpy_1 = *--position;
+			*position = val;
+			while (position != begin_) {
+				--position;
+				if (++even % 2) {
+					cpy_2 = *position;
+					*position = cpy_1;
 				}
-				*position = cpy_;
+				else
+				{
+					cpy_1 = *position;
+					*position = cpy_2;
+				}
 			}
 		}
-		// ++_size;
-		return (position);
+		return (position_to_return);
+	}
+
+	void insert (iterator position, size_type n, const value_type& val) {
+		while (n--) {
+			printf("ds (2) insert\n");
+			insert (position, val);
+		}
 	}
 	// std::ostream & operator<<(std::ostream & o, ft::vector<_T, _Alloc>::iterator const & i) { o << i.getPtr(); return o;}
 
 }; // Fin de la classe vector
 
 template <typename _T, typename _Alloc>
-	std::ostream & operator<<(std::ostream & o, typename vector<_T, _Alloc>::iterator const & i) { o << i.getPtr(); return o;}
+	std::ostream & operator<<(std::ostream & o, typename ft::vector<_T, _Alloc>::iterator const & i) { o << (size_t)i.getPtr(); return o;}
 
 // template <typename _T, typename _Alloc>
 // 	std::ostream & vector<_T, _Alloc>::iterator::operator<<(std::ostream & o, ft::vector<_T, _Alloc>::iterator const & i) { o << i.getPtr(); return o;}
@@ -349,3 +396,21 @@ template <typename _T, typename _Alloc>
 
 
 // |.............v....|..................|
+
+/* template <typename _T>
+	void cpy_array(_T* tab, bool forward){
+				while (forward ? position != end_: position != begin_)
+				{
+					++position;
+					if (++even % 2) {
+						cpy_2 = *position;
+						*position = cpy_1;
+					}
+					else
+					{
+						cpy_1 = *position;
+						*position = cpy_2;
+					}
+				}
+		return ;
+	} */
