@@ -11,11 +11,15 @@
 
 int main()
 {
+	ClassTest b(5);
 	ClassTest c(6);
-
 	std::cout << GREEN "Correction des Vecteurs" RESET << std::endl;
 
 	ft::vector<ClassTest> vec(2, c);
+	ft::vector<ClassTest> vec2(2, b);
+	std::cout << YELLOW "Correction operator ==" RESET << std::endl;
+	std::cout << "(vec == vec2) : " << (vec == vec2)  << std::endl;
+	std::cout << "(vec < vec2) : " << (vec2 < vec)  << std::endl;
 	std::cout << vec.capacity() << std::endl;
 	// vec.resize(18);
 
@@ -51,7 +55,6 @@ int main()
 	std::cout << "vec.max_size() : " << vec.max_size() << std::endl;
 	// vec.getNb();
 	std::cout << YELLOW "Correction de push_back()" RESET << std::endl;
-	ClassTest b(5);
 	vec.push_back(b);
 	for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
 		std::cout << *it << "\n";
@@ -74,9 +77,49 @@ int main()
 	for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
 		std::cout << *it << "\n";
 	it = vec.begin();
-	vec.insert(it, 4, 2);
+	vec.insert(it, 4, b);
 	for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
 		std::cout << *it << "\n";
+
+	std::cout << YELLOW "Correction de erase()" RESET << std::endl;
+
+	it = vec.begin();
+	for (size_t i = 0; i < 4; i++)
+		++it;
+	ft::vector<ClassTest>::iterator end = vec.end();
+	std::cout << "size : " << vec.size() << "\n";
+	vec.erase(it, end);
+	std::cout << "size : " << vec.size() << "\n";
+
+	for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
+		std::cout << *it << "\n";
+
+	std::cout << YELLOW "Correction de erase() unitaire" RESET << std::endl;
+
+	// //Erase Merdouille
+	it = vec.begin();
+	for (size_t i = 0; i < 4; i++)
+		vec.erase(it);
+
+	for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
+		std::cout << *it << "\n";
+
+	std::cout << YELLOW "Correction de clear()" RESET << std::endl;
+	vec.clear();
+	for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
+		std::cout << *it << "\n";
+
+/* 	std::cout << GREEN "Vecteur2 insert" RESET << std::endl;
+	ft::vector<ClassTest> vec2(2,c);
+	it = vec.begin();
+	for (size_t i = 0; i < 3; i++)
+		++it;
+	ft::vector<ClassTest>::iterator end = vec.end();
+	ft::vector<ClassTest>::iterator vec2begin = vec2.begin();
+	vec2.insert(++vec2begin, it, end);
+	for (ft::vector<ClassTest>::iterator it = vec2.begin(), end = vec2.end(); it != end; ++it)
+		std::cout << *it << "\n"; */
+
 /*	std::cout << GREEN "Vecteur officiel" RESET << std::endl;
 
  	std::vector<ClassTest> vec1(2, 8);
