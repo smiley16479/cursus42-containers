@@ -51,6 +51,10 @@ namespace ft {
 			return (true);
 		return (false);
 	}
+
+	size_type size() const {
+		return ( _c.size() );
+	}
 	
 	value_type& top() {
 		return ( _c[_c.size() - 1] );
