@@ -1,5 +1,6 @@
 // #include "vector.tpp"
 #include "vector.hpp"
+#include "stack.hpp"
 // #include "./test/friend_directory/solalDunckel/includes/vector.hpp"
 // #include "./test/friend_directory/solalDunckel/includes/vector_iterator.hpp"
 // #include "./test/friend_directory/ska42/Vector.hpp"
@@ -13,6 +14,13 @@ int main()
 {
 	ClassTest b(5);
 	ClassTest c(6);
+	std::cout << GREEN "Correction de Stack" RESET << std::endl;
+	ft::stack<ClassTest> stack1;
+	stack1.push(b);
+	std::cout << GREEN "Correction de Stack_top()" RESET << std::endl;
+	std::cout << "Stack_top()" << stack1.top() << std::endl;
+	
+
 	std::cout << GREEN "Correction des Vecteurs" RESET << std::endl;
 
 	ft::vector<ClassTest> vec(2, c);
@@ -129,6 +137,7 @@ int main()
 	std::cout << "vec.max_size() : " << vec1.max_size() << std::endl;
 	// std::cout << vec1.size() << std::endl;
 	// std::cout << vec1.capacity() << std::endl; */
+	std::cout << GREEN "Ended Normaly" RESET << std::endl;
 	return 0;
 }
 

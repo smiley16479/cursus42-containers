@@ -1,3 +1,5 @@
+#ifndef VECTOR_HPP
+#define VECTOR_HPP
 #include <memory>
 #include <limits>
 #include <stddef.h>
@@ -346,7 +348,7 @@ namespace ft {
 		else
 			capacity = _capacity;
 		_T* tmpTab_ = _allocator.allocate(capacity);
-		for (size_t i = 0; i < ptr_diff; ++i)
+		for (long i = 0; i < ptr_diff; ++i)
 			tmpTab_[i] = _tab[i];
 		tmpTab_[ptr_diff] = val;
 		size_t i = 0;
@@ -422,7 +424,7 @@ namespace ft {
 	void clear() {
 		for (iterator it = this->begin(), end = this->end(); it != end; ++it)
 			_allocator.destroy(&(*it));
-		_size ^= _size;
+		_size = 0;
 	}
 
 	allocator_type get_allocator() const {
@@ -480,8 +482,15 @@ template <class T, class Alloc>
 	}
 
 
+template <class T, class Alloc>
+  void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) {
+	  x.swap(y);
+	  return ;
+  }
+
 template <typename _T, typename _Alloc>
 	std::ostream & operator<<(std::ostream & o, typename ft::vector<_T, _Alloc>::iterator const & i) { o << (size_t)i.getPtr(); return o;}
+	// std::ostream & operator<<(std::ostream & o, typename vector<_T>::iterator const & i) { o << i.getPtr(); return o;}
 
 // template <typename _T, typename _Alloc>
 // 	std::ostream & vector<_T, _Alloc>::iterator::operator<<(std::ostream & o, ft::vector<_T, _Alloc>::iterator const & i) { o << i.getPtr(); return o;}
@@ -509,3 +518,5 @@ template <typename _T, typename _Alloc>
 				}
 		return ;
 	} */
+
+#endif

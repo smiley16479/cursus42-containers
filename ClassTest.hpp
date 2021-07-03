@@ -98,6 +98,6 @@ bool ClassTest::operator<( ClassTest const & rhs )
 
 std::ostream & operator<<( std::ostream & o, ClassTest const & i )
 {
-	o << "_nb is : " << i.getNb() << ", _ptr(value) is : " << i.getPtrNb();
+	o << "_nb is : " << i.getNb()/*  << ", _ptr(value) is : " << i.getPtrNb() */;
 	return o;
 }
