@@ -456,13 +456,9 @@ template <class T, class Alloc>
 template <class T, class Alloc>
 	bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 		size_t i = 0, j = rhs.size();
-		// if (lhs.size() < rhs.size()) {
 			for (typename ft::vector<T>::iterator it1 = lhs.begin(), it2 = rhs.begin(); i < j; ++i, ++it1, ++it2)
 				if (*it1 < *it2)
 					return (true);
-		// }
-		// else
-			// return (false);
 		return (false);
 	}
 

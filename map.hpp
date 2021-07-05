@@ -11,6 +11,8 @@
 #include "colors.h"
 #endif
 
+// https://h-deb.clg.qc.ca/Sujets/TrucsScouts/Comprendre_enable_if.html
+// https://h-deb.clg.qc.ca/Sujets/Divers--cplusplus/Traits.html 
 
 namespace ft {
 
@@ -21,7 +23,14 @@ namespace ft {
            > class map
 	{
 	private:
-		/* data */
+	
+	typedef struct s_tree
+	{
+		s_tree* parent;
+		s_tree* left;
+		s_tree* right;
+	}t_tree;
+	typedef index s_tree*; // index de recherche rapide
 
 
 	public:
