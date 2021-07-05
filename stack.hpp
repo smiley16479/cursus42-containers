@@ -38,7 +38,7 @@ namespace ft {
 
 	// Default Constructor
 	explicit stack(const container_type& ctnr = container_type())
-	// : _c(ctnr) // _size(0), _capacity(vAddedMem), _allocator(const_cast<allocator_type&>(alloc))
+	// : _c(ctnr) // _size(0), _capacity(vAddedMem), _allocator(const_cast<allocator_type&>(alloc)) // cannot use this as the operator= won't be called in this case
 	{
 		_c = ctnr;
 		#ifdef _DEBUG_
