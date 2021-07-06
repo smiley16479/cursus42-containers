@@ -23,10 +23,6 @@ namespace ft {
            > class map
 	{
 
-
-	
-
-
 	private:
 	
 
@@ -55,16 +51,26 @@ namespace ft {
 
 	template<class T1, class T2>
 	class autre {
-
-		autre() : _index. {}
-
+		public :
+		autre() { 
+			_index.myPair.t1 = int(1);
+			_index.myPair.t2 = int(2);
+			_index.parent	= NULL;
+			_index.left  	= NULL;
+			_index.right 	= NULL;
+		}
+		private :
 		s_tree<T1, T2> _index; // index de recherche rapide
-	};
+	}; 
 
-	autre::
+	// template<class T1, class T2>
+	// 	autre<T1, T2> _index;
+
+	// template<class T1, class T2>
+	// 	s_tree<T1, T2>* _index;
 
 	public :
-		// typename ft::map< Key, T, Compare, Alloc>:: ;
+	// typename ft::map< Key, T, Compare, Alloc>:: ;
 
 	// typedef typename std::stack<T>::container_type::iterator iterator;
 	// typedef typename ft::map< Key, T, Compare, Alloc>::pair<T1, T2> pair;
@@ -87,7 +93,16 @@ namespace ft {
 	template<class T1, class T2>
 	map()
 	{
-		_index = new s_tree<T1, T2>;
+		autre<T1, T2>::_index = new s_tree<T1, T2>;
+		// _index = new s_tree<T1, T2>;
+		std::cout << "Default Map Constructor" << std::endl;
+	}
+
+	template<class T1, class T2>
+	map(T1 t1, T2 t2)
+	{
+		autre<T1, T2>::_index = new s_tree<T1, T2>;
+		// _index = new s_tree<T1, T2>;
 	}
 
 	~map()

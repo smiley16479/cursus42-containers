@@ -35,6 +35,7 @@ namespace ft {
 
 	typedef Container	container_type;
 	typedef _T 			value_type;
+	typedef std::size_t 			size_type;
 
 	// Default Constructor
 	explicit stack(const container_type& ctnr = container_type())

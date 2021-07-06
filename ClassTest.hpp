@@ -26,8 +26,6 @@ private:
 
 std::ostream &    operator<<( std::ostream & o, ClassTest const & i );
 
-#endif
-
 
 ClassTest::ClassTest( void ) : _nb( 0 ), _ptr(new int(0))
 {
@@ -101,3 +99,4 @@ std::ostream & operator<<( std::ostream & o, ClassTest const & i )
 	o << "_nb is : " << i.getNb()/*  << ", _ptr(value) is : " << i.getPtrNb() */;
 	return o;
 }
+#endif
