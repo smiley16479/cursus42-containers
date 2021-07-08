@@ -1,6 +1,4 @@
-// #include "vector.tpp"
-#include "vector.hpp"
-#include "stack.hpp"
+
 #include "map.hpp"
 // #include "./test/friend_directory/solalDunckel/includes/vector.hpp"
 // #include "./test/friend_directory/solalDunckel/includes/vector_iterator.hpp"
@@ -13,11 +11,12 @@
 
 int map_test()
 {
+	ClassTest a(4);
 	ClassTest b(5);
 	ClassTest c(6);
 	
 	std::cout << GREEN "Map Declaration" RESET << std::endl;
-	ft::map<ClassTest, ClassTest> map1;
+	ft::map<std::string, std::int32_t> map1(a, b);
 
 	std::cout << GREEN "Ended Normaly" RESET << std::endl;
 	return 0;

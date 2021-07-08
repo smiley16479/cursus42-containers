@@ -29,7 +29,12 @@ int main()
 	int a = 1;
 	foo<int> test(a);
 
-	// foo::value_type *ptr;
+	test.test_typedef();
+	foo<int>::value_type *ptr;
+	foo<int>::value_type is_int=5;
+
+	std::cout << is_int << std::endl;
+
 	test.assign();
 	// std::cout << test.get_ptr() << std::endl;
 	std::cout << test << std::endl;

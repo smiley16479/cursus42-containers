@@ -1,7 +1,6 @@
-// #include "vector.tpp"
+
 #include "vector.hpp"
 #include "stack.hpp"
-#include "map.hpp"
 // #include "./test/friend_directory/solalDunckel/includes/vector.hpp"
 // #include "./test/friend_directory/solalDunckel/includes/vector_iterator.hpp"
 // #include "./test/friend_directory/ska42/Vector.hpp"
@@ -20,9 +19,6 @@ int stack_test()
 	stack1.push(b);
 	std::cout << GREEN "Correction de Stack_top()" RESET << std::endl;
 	std::cout << "Stack_top()" << stack1.top() << std::endl;
-
-	std::cout << GREEN "Map Declaration" RESET << std::endl;
-	ft::map<ClassTest, ClassTest> map1();
 
 	std::cout << GREEN "Correction des Vecteurs" RESET << std::endl;
 

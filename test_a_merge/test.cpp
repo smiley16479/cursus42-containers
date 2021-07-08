@@ -1,4 +1,7 @@
+// Contrôle d'accès aux membres (C++) -> https://docs.microsoft.com/fr-fr/cpp/cpp/member-access-control-cpp?view=msvc-160
+
 /* // access_specifiers_for_base_classes.cpp
+
 class BaseClass
 {
 public:
