@@ -1,7 +1,7 @@
 #include "map.hpp"
 #include "vector.hpp"
 #include "stack.hpp"
-
+#include <string.h>
 #include "test_a_merge/mes_test/map_test.cpp"
 #include "test_a_merge/mes_test/vector_test.cpp"
 #include "test_a_merge/mes_test/stack_test.cpp"

@@ -9,7 +9,7 @@
 #ifdef _DEBUG_
 #include <iostream>
 #include "colors.h"
-#include "map_util.hpp"
+// #include "map_util.hpp"
 #endif
 
 // https://h-deb.clg.qc.ca/Sujets/TrucsScouts/Comprendre_enable_if.html
@@ -24,9 +24,9 @@ namespace ft {
            > class map
 	{
 
-	private:
+	public:
 
-	template <class T1, class T2>
+	template <typename T1, typename T2>
 	class pair
 	{
 		public :
@@ -49,8 +49,8 @@ namespace ft {
 		s_tree* right;
 	};
 
-	template<class T1, class T2>
-	class autre {
+	// template<class T1, class T2>
+/* 	class autre {
 		public :
 		autre() { 
 			_index.myPair.t1 = int(1);
@@ -60,8 +60,8 @@ namespace ft {
 			_index.right 	= NULL;
 		}
 		private :
-		s_tree<T1, T2> _index; // index de recherche rapide
-	}; 
+		s_tree _index; // index de recherche rapide
+	};  */
 
 	// template<class T1, class T2>
 	// autre<T1, T2> _index;
@@ -86,8 +86,8 @@ namespace ft {
 	// typedef									const_iterator //	a bidirectional iterator to const value_type	
 	// typedef									reverse_iterator //	reverse_iterator<iterator>	
 	// typedef									const_reverse_iterator //	reverse_iterator<const_iterator>	
-	// typedef									difference_type //	a signed integral type, identical to: iterator_traits<iterator>::difference_type	usually the same as ptrdiff_t
-	// typedef									size_type //	an unsigned integral type that can represent any non-negative value of difference_type	usually the same as size_t
+	typedef	ptrdiff_t							difference_type; //	a signed integral type, identical to: iterator_traits<iterator>::difference_type	usually the same as ptrdiff_t
+	typedef	size_t								size_type; //	an unsigned integral type that can represent any non-negative value of difference_type	usually the same as size_t
 
 	// typename ft::map< Key, T, Compare, Alloc>:: ;
 
@@ -109,23 +109,90 @@ namespace ft {
 	// copy (1)	
 		// map& operator= (const map& x);
 
+	// CAPACITY:
 
+	// bool empty() const; // Returns whether the map container is empty (i.e. whether its size is 0).
+	// size_type size() const; // Return container size
+	// size_type max_size() const; // Return maximum size
+
+	// ELEMENT ACCESS:
+	// operator[]
+
+	// MODIFIERS:
+	// // single element (1)	// insert : Extends the container by inserting new elements, effectively increasing the container size by the number of elements inserted.
+	// // pair<iterator,bool> insert (const value_type& val);
+	// // with hint (2)	
+	// // iterator insert (iterator position, const value_type& val);
+	// // range (3)	
+	// // template <class InputIterator>
+	// //   void insert (InputIterator first, InputIterator last);
+
+	// Removes from the map container either a single element or a range of elements ([first,last)).
+	// This effectively reduces the container size by the number of elements removed, which are destroyed.
+	// (1) void erase (iterator position);
+	// (2) size_type erase (const key_type& k);
+	// (3) void erase (iterator first, iterator last);
+
+	// void swap (map& x); // Exchanges the content of the container by the content of x, which is another map of the same type. Sizes may differ.
+	// void clear(); // Clear content Removes all elements from the map container (which are destroyed), leaving the container with a size of 0.
+
+	// OBSERVERS:
+	// // key_compare key_comp() const; // Returns a copy of the comparison object used by the container to compare keys.
+	// // value_compare value_comp() const; // Returns a comparison object that can be used to compare two elements to get whether the key of the first one goes before the second.
+
+	// OPERATIONS:
+
+// Searches the container for an element with a key equivalent to k and returns an iterator to it if found, otherwise it returns an iterator to map::end.
+	// iterator find (const key_type& k);
+	// const_iterator find (const key_type& k) const;
+	
+	// size_type count (const key_type& k) const; //Searches the container for elements with a key equivalent to k and returns the number of matches.
+
+// Returns an iterator pointing to the first element in the container whose key is not considered to go before k (i.e., either it is equivalent or goes after).
+	// iterator lower_bound (const key_type& k);
+	// const_iterator lower_bound (const key_type& k) const;
+
+// Returns an iterator pointing to the first element in the container whose key is considered to go after k.
+	// iterator upper_bound (const key_type& k);
+	// const_iterator upper_bound (const key_type& k) const;
+
+// Returns the bounds of a range that includes all the elements in the container which have a key equivalent to k.
+	// pair<const_iterator,const_iterator> equal_range (const key_type& k) const;
+	// pair<iterator,iterator>             equal_range (const key_type& k);
+
+	// ALLOCATOR:
+
+// Returns a copy of the allocator object associated with the map.
+	// allocator_type get_allocator() const;
+
+// BEGIN IMPLEMENTATION
+	// Constructs an empty container, with no elements.
 	explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
+	: _keyCmp(comp), _allocTp(alloc), _size(0)
 	{
-		
+		std::cout << "Default Map Constructor" << std::endl;
+		_mapTree = new s_tree;
+		_mapTree->myPair.t1 = "foo";
+		_mapTree->myPair.t2 = int(1);
+		_mapTree->parent = NULL;
+		_mapTree->left = NULL;
+		_mapTree->right = NULL;
 	}
 
+	// Constructs a container with as many elements as the range [first,last), 
+	// with each element constructed from its corresponding element in that range.
 	template <class InputIterator>
 	map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 	{
-		autre<T1, T2>::_index = new s_tree<T1, T2>;
+		// autre<T1, T2>::_index = new s_tree<T1, T2>;
 		// _index = new s_tree<T1, T2>;
-		std::cout << "Default Map Constructor" << std::endl;
+		std::cout << "InputIterator Map Constructor" << std::endl;
 	}
 
+	// Constructs a container with a copy of each of the elements in x.
 	map (const map& x)
 	{
-		static typename autre<T1, T2>::_index = new s_tree<T1, T2>;
+		// static typename autre<T1, T2>::_index = new s_tree<T1, T2>;
 		// _index = new s_tree<T1, T2>;
 	}
 
@@ -133,10 +200,23 @@ namespace ft {
 	{
 	}
 
+	// Copy container content
+	// Assigns new contents to the container, replacing its current content.
+	 map& operator= (const map& x)
+	{
+
+	}
+
+	bool empty() const { return _size ? true : false;}
+	size_type size() const { return _size;}
+	size_type max_size() const { return _allocTp.max_size(); }
+
 	private:
 
-	key_compare _keyCmp;
-	allocator_type _allocTp;
+	key_compare 	_keyCmp;
+	allocator_type 	_allocTp;
+	size_type		_size;
+	s_tree<Key, T>	*_mapTree;
 
 	};
 

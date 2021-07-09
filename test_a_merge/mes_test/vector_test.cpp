@@ -13,11 +13,6 @@ int vector_test()
 {
 	ClassTest b(5);
 	ClassTest c(6);
-	std::cout << GREEN "Correction de Stack" RESET << std::endl;
-	ft::stack<ClassTest> stack1;
-	stack1.push(b);
-	std::cout << GREEN "Correction de Stack_top()" RESET << std::endl;
-	std::cout << "Stack_top()" << stack1.top() << std::endl;
 
 	std::cout << GREEN "Correction des Vecteurs" RESET << std::endl;
 

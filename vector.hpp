@@ -273,7 +273,8 @@ namespace ft {
 			_T* tmpTab_ = _allocator.allocate(capacity);
 			for (size_t i = 0; i < _size; ++i)
 				tmpTab_[i] = _tab[i];
-			ft::vector<_T, _Alloc >::~vector(); // cannot use "delete this;" bcoz new wasn't use eventhought it is used by the std::allocator
+			// ft::vector<_T, _Alloc >::~vector(); // cannot use "delete this;" bcoz new wasn't use eventhought it is used by the std::allocator
+			this->~vector();
 			_capacity = capacity;
 			_tab = tmpTab_;
 		}
@@ -354,7 +355,8 @@ namespace ft {
 		size_t i = 0;
 		for (iterator end = this->end(); position != end; ++position, ++i)
 			tmpTab_[ptr_diff + 1 + i] = *position;
-		ft::vector<_T, _Alloc >::~vector(); // cannot use "delete this;" bcoz new wasn't use eventhought it is used by the std::allocator
+		// ft::vector<_T, _Alloc >::~vector(); // cannot use "delete this;" bcoz new wasn't use eventhought it is used by the std::allocator
+		this->~vector();
 		_capacity = capacity;
 		_size += 1;
 		_tab = tmpTab_;
