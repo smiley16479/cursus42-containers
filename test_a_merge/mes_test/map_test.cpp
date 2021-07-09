@@ -18,7 +18,7 @@ int map_test()
 	std::cout << GREEN "Map Declaration" RESET << std::endl;
 	ft::map<std::string, std::int32_t> map1;
 	// ft::map<std::string, std::int32_t> map1(a, b);
-
+	std::cout << map1;
 	std::cout << GREEN "Ended Normaly" RESET << std::endl;
 	return 0;
 }

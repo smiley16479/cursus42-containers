@@ -4,16 +4,24 @@
 #include <memory>
 #include <limits>
 #include <stddef.h>
+#include <string>
 
 #define _DEBUG_
 #ifdef _DEBUG_
 #include <iostream>
 #include "colors.h"
-// #include "map_util.hpp"
+#include "map_util.hpp"
 #endif
 
+
+// TRAIT 
 // https://h-deb.clg.qc.ca/Sujets/TrucsScouts/Comprendre_enable_if.html
 // https://h-deb.clg.qc.ca/Sujets/Divers--cplusplus/Traits.html 
+
+// BINARY TREE
+// https://www.thegeekstuff.com/2013/02/c-binary-tree/
+// https://www.geeksforgeeks.org/binary-search-tree-set-1-search-and-insertion/
+// https://www.geeksforgeeks.org/insertion-in-a-binary-tree-in-level-order/
 
 namespace ft {
 
@@ -25,18 +33,6 @@ namespace ft {
 	{
 
 	public:
-
-	template <typename T1, typename T2>
-	class pair
-	{
-		public :
-
-		pair () : t1(), t2() {};
-
-		private :
-		T1 t1;
-		T2 t2;
-	};
 
 	template<class T1, class T2>
 	struct s_tree
@@ -171,9 +167,9 @@ namespace ft {
 	: _keyCmp(comp), _allocTp(alloc), _size(0)
 	{
 		std::cout << "Default Map Constructor" << std::endl;
-		_mapTree = new s_tree;
-		_mapTree->myPair.t1 = "foo";
-		_mapTree->myPair.t2 = int(1);
+		_mapTree = new s_tree<Key, T>;
+		_mapTree->myPair.first = "foo";
+		_mapTree->myPair.second = int(2);
 		_mapTree->parent = NULL;
 		_mapTree->left = NULL;
 		_mapTree->right = NULL;
@@ -211,6 +207,12 @@ namespace ft {
 	size_type size() const { return _size;}
 	size_type max_size() const { return _allocTp.max_size(); }
 
+
+	pair<iterator,bool> insert (const value_type& val) {}
+
+	// to erase
+	Key getStr() { return _mapTree->myPair.first;}
+
 	private:
 
 	key_compare 	_keyCmp;
@@ -219,6 +221,9 @@ namespace ft {
 	s_tree<Key, T>	*_mapTree;
 
 	};
+
+	template<typename Key, typename T>
+	std::ostream& operator <<(std::ostream &o, ft::map<Key, T> &x) { o << x.getStr() << std::endl; return o;}
 
 }
 
