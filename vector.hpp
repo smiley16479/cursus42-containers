@@ -43,7 +43,7 @@ namespace ft {
     {
 		typedef std::forward_iterator_tag	iterator_category;
 
-        iterator(pointer ptr) : _ptr(ptr) {}
+        iterator(pointer ptr) : _ptr(ptr) { std::cout << "iterator_vector default constructor" << std::endl;}
         // iterator(iterator const & ptr) : _ptr(ptr._ptr) {}
 
 		pointer getPtr() const { return _ptr; }
@@ -193,7 +193,7 @@ namespace ft {
 		std::cout << "vector Assignment operator called" << std::endl;
 		#endif
 		if ( this != &x ) {
-			ft::vector<_T, _Alloc >::~vector(); // cannot use "delete this;" bcoz new wasn't use eventhought it is used by the std::allocator
+			/* ft::vector<_T, _Alloc >:: */this->~vector(); // cannot use "delete this;" bcoz new wasn't use eventhought it is used by the std::allocator
  			_size = x._size;
 			_capacity = x._capacity;
 			_allocator = x._allocator;
@@ -312,9 +312,17 @@ namespace ft {
 // In the fill version (2), the new contents are n elements, each initialized to a copy of val.
 // If a reallocation happens,the storage needed is allocated using the internal allocator.
 	template <class InputIterator>
-	void assign (InputIterator first, InputIterator last);
+	void assign (InputIterator first, InputIterator last) {
+		clear();
+		for (;first != last; ++first)
+			push_back(*first);
+	}
 	
-	void assign (size_type n, const value_type& val);
+	void assign (size_type n, const value_type& val) {
+		clear();
+		while (n--)
+			push_back(val);
+	}
 
 	void push_back (const value_type& val) {
 		reserve(_size + 1);
@@ -425,7 +433,7 @@ namespace ft {
 
 	void clear() {
 		for (iterator it = this->begin(), end = this->end(); it != end; ++it)
-			_allocator.destroy(&(*it));
+			_allocator.destroy(&(*it)); // (it) ne marche pas -> mismatch types ‘_Up*’ and ‘ft::vector<ClassTest>::iterator’
 		_size = 0;
 	}
 

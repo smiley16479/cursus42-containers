@@ -28,13 +28,14 @@ namespace ft {
 	template < class Key,                                     // map::key_type
            class T,                                       // map::mapped_type
            class Compare = std::less<Key>,                     // map::key_compare
-           class Alloc = std::allocator<std::pair<const Key,T> >    // map::allocator_type
+           class Alloc = std::allocator<ft::pair<const Key,T> >    // map::allocator_type
            > class map
 	{
 
 	public:
 
-	template<class T1, class T2>
+// Why is there no redefinition error (already difined in map_utils.hpp) if I uncomment this struct ?
+/* 	template<class T1, class T2>
 	struct s_tree
 	{
 		// typename ft::map< Key, T, Compare, Alloc>:: ;
@@ -43,42 +44,22 @@ namespace ft {
 		s_tree* parent;
 		s_tree* left;
 		s_tree* right;
-	};
-
-	// template<class T1, class T2>
-/* 	class autre {
-		public :
-		autre() { 
-			_index.myPair.t1 = int(1);
-			_index.myPair.t2 = int(2);
-			_index.parent	= NULL;
-			_index.left  	= NULL;
-			_index.right 	= NULL;
-		}
-		private :
-		s_tree _index; // index de recherche rapide
-	};  */
-
-	// template<class T1, class T2>
-	// autre<T1, T2> _index;
-
-	// template<class T1, class T2>
-	// s_tree<T1, T2>* _index;
-
-	public:
+	}; */
 
 	typedef Key									key_type;	// The first template parameter (Key)	
 	typedef T									mapped_type;	// The second template parameter (T)	
-	typedef pair<const key_type,mapped_type>	value_type;	// pair<const key_type,mapped_type>	
+	typedef ft::pair<const key_type,mapped_type>	value_type;	// pair<const key_type,mapped_type>	
 	typedef	Compare								key_compare;	// The third template parameter (Compare)	defaults to: less<key_type>
-	//? typedef		value_compare	// Nested function class to compare elements	see value_comp -> // http://www.cplusplus.com/reference/map/map/value_comp/
+	//? typedef		value_compare	// Nested function class to compare elements see value_comp -> // http://www.cplusplus.com/reference/map/map/value_comp/
 	typedef	Alloc								allocator_type;	// The fourth template parameter (Alloc)	defaults to: allocator<value_type>
-	typedef	value_type&							reference;	// allocator_type::reference	for the default allocator: value_type&
-	typedef const value_type&					const_reference;	// allocator_type::const_reference	for the default allocator: const value_type&
+	
+	// typedef allocator_type::reference			reference;	// allocator_type::reference for the default allocator: value_type&
+	typedef	value_type&							reference;	// allocator_type::reference for the default allocator: value_type&
+	typedef const value_type&					const_reference;	// allocator_type::const_reference for the default allocator: const value_type&
 	typedef	value_type*							pointer; //	allocator_type::pointer	for the default allocator: value_type*
-	typedef	const value_type*					const_pointer; //	allocator_type::const_pointer	for the default allocator: const value_type*
+	typedef	const value_type*					const_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
 
-	// typedef									iterator	// a bidirectional iterator to value_type	convertible to const_iterator
+	// typedef									iterator	// a bidirectional iterator to value_type convertible to const_iterator
 	// typedef									const_iterator //	a bidirectional iterator to const value_type	
 	// typedef									reverse_iterator //	reverse_iterator<iterator>	
 	// typedef									const_reverse_iterator //	reverse_iterator<const_iterator>	
@@ -90,6 +71,67 @@ namespace ft {
 	// typedef typename std::stack<T>::container_type::iterator iterator;
 	// typedef typename ft::map< Key, T, Compare, Alloc>::pair<T1, T2> pair;
 	// typedef typename ft::map< Key, T, Compare, Alloc>::s_	
+
+// ITERATORS:
+
+//solal
+    typedef ft::map_iterator<key_type, mapped_type>        iterator;
+    typedef ft::map_iterator<key_type, mapped_type, true>  const_iterator;
+    typedef ft::reverse_iterator<iterator>                 reverse_iterator;
+    typedef ft::reverse_iterator<const_iterator>           const_reverse_iterator;
+//solal
+
+/*    struct iterator
+    {
+		typedef std::forward_iterator_tag	iterator_category;
+		typedef ft::s_tree<Key, T>*	map_iterator; //AJOUT
+ 
+		iterator() { std::cout << "test iterator_map default constructor" << std::endl;}
+		iterator(pointer ptr) : _ptr(ptr) { std::cout << "iterator_map default constructor" << std::endl;}
+		// iterator(iterator const & ptr) : _ptr(ptr._ptr) {}
+ 
+		pointer getPtr() const { return _ptr; }
+		reference operator*() const { return *_ptr; }
+		pointer operator->() { return _ptr; }
+		map_iterator& operator++() {
+			if (_ptr->parent && _ptr->parent->left)
+				return (_ptr->parent->left);
+			
+		 }
+		// iterator& operator++() { ++_ptr; return *this; }
+		iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+		iterator& operator--() { --_ptr; return *this; }
+		iterator operator--(int) { iterator tmp = *this; --(*this); return tmp; }
+		// iterator& operator=( iterator & i ) {_ptr(i._ptr); return *this;}
+		iterator& operator+=( iterator & i ) {_ptr += (size_t)i._ptr; return *this;}
+		iterator operator+( iterator & i ) {iterator copie(_ptr); copie += i; return (copie);}
+		iterator& operator-=( iterator & i ) {_ptr -= (size_t)i._ptr; return *this;}
+		iterator operator-( iterator & i ) {iterator copie(_ptr); copie -= i; return (copie);}
+		friend bool operator== (const iterator& a, const iterator& b) { return a._ptr == b._ptr; };
+		friend bool operator!= (const iterator& a, const iterator& b) { return a._ptr != b._ptr; };
+ 
+    private:
+        pointer _ptr;
+    }; */
+ 
+		typedef iterator	  	  reverse_iterator;
+		typedef const iterator	  const_iterator;
+		typedef const_iterator	  const_reverse_iterator;
+ 
+	iterator begin() { s_tree<Key, T> temp = _mapTree;
+		while (temp->left) temp = temp->left;
+		return iterator(temp); }
+	const_iterator begin() const { return this->begin();}
+	iterator end()   { s_tree<Key, T> temp = _mapTree;
+		while (temp->right) temp = temp->right;
+		return iterator(temp); }
+	const_iterator end() const { return this->end();}
+	reverse_iterator rbegin() { return this->end();}
+	const_reverse_iterator rbegin() const { return this->end();}
+	reverse_iterator rend() { return this->begin();}
+	const_reverse_iterator rend() const { return this->begin();}
+
+
 
 //Implemented method and // //NON implemented method
 	//  CONSTRUCTORS
@@ -168,7 +210,7 @@ namespace ft {
 	{
 		std::cout << "Default Map Constructor" << std::endl;
 		_mapTree = new s_tree<Key, T>;
-		_mapTree->myPair.first = "foo";
+		_mapTree->myPair.first = 'f';
 		_mapTree->myPair.second = int(2);
 		_mapTree->parent = NULL;
 		_mapTree->left = NULL;
@@ -194,24 +236,87 @@ namespace ft {
 
 	~map()
 	{
+		std::cout << "Default Map Desstructor" << std::endl;
+		deltree(_mapTree);
 	}
 
 	// Copy container content
 	// Assigns new contents to the container, replacing its current content.
 	 map& operator= (const map& x)
 	{
-
+		// if (_mapTree->left)
+		// while (_mapTree->left || _mapTree->right)
 	}
 
+// CAPACITY:
 	bool empty() const { return _size ? true : false;}
 	size_type size() const { return _size;}
 	size_type max_size() const { return _allocTp.max_size(); }
 
 
-	pair<iterator,bool> insert (const value_type& val) {}
+// ELEMENT ACCESS:
+	// operator[]
+
+// MODIFIERS:
+	pair<iterator,bool> insert (const value_type& val) {
+		++_size;
+		s_tree<Key, T> *temp = _mapTree;
+		pair<iterator,bool> toRetunrPair;
+		while (temp) { // Si on tombe sur la même clefs
+			if (0) { //std::equal<Key>()(val.first, temp->myPair->first)) { 
+				temp->myPair.second = val.second;
+				iterator it(temp);
+				toRetunrPair.first = it;
+				toRetunrPair.second = false;
+				return toRetunrPair;
+			} // Sinon
+			if (std::less<Key>()(val.first, temp->myPair.first))
+				temp = temp->left;
+			else
+				temp = temp->right;
+		}
+		temp = addNode(val);
+		iterator it(temp);
+		toRetunrPair.first = it;
+		toRetunrPair.second = false;
+		return toRetunrPair;
+	}
 
 	// to erase
 	Key getStr() { return _mapTree->myPair.first;}
+
+
+	void print_preorder(s_tree<Key, T> * tree) {
+		if (tree) {
+		printf("%d\n",tree->myPair->first);
+		print_preorder(tree->left);
+		print_preorder(tree->right);
+		}
+	}
+	
+	void print_inorder(s_tree<Key, T> * tree) {
+		if (tree) {
+		print_inorder(tree->left);
+		printf("%d\n",tree->myPair->first);
+		print_inorder(tree->right);
+		}
+	}
+	
+	void print_postorder(s_tree<Key, T> * tree) {
+		if (tree) {
+		print_postorder(tree->left);
+		print_postorder(tree->right);
+		printf("%d\n",tree->myPair->first);
+		}
+	}
+
+	void deltree(s_tree<Key, T> * tree) {
+		if (tree) {
+		  deltree(tree->left);
+		  deltree(tree->right);
+		  delete (tree);
+		}
+	}
 
 	private:
 
@@ -219,6 +324,15 @@ namespace ft {
 	allocator_type 	_allocTp;
 	size_type		_size;
 	s_tree<Key, T>	*_mapTree;
+
+	s_tree<Key, T>* addNode(const value_type& val) {
+		s_tree<Key, T>* node = new s_tree<Key, T>;
+		node->myPair->first = val.first;
+		node->myPair->second = val.second;
+		node->left  = NULL;
+		node->right = NULL;
+		return node;
+	}
 
 	};
 

@@ -3,44 +3,45 @@
 
 namespace ft {
 
+
+/*   template <class T1, class T2> // pair de Solal
+  struct pair {
+    typedef T1   first_type;
+    typedef T2   second_type;
+
+    pair() : first(), second() {};
+    pair (const first_type &a, const second_type &b) : first(a), second(b) {};
+
+    template<class U, class V>
+    pair (const pair<U, V> &pr) : first(pr.first), second(pr.second) {};
+
+    ~pair() {};
+
+    pair<T1, T2>  &operator= (const pair<T1, T2> &pr) {
+      first = pr.first;
+      second = pr.second;
+      return *this;
+    };
+
+    first_type  first;
+    second_type second;
+  }; */
+
 	template <typename T1, typename T2>
 	struct pair
 	{
 		typedef T1	first_type;	// The first template parameter (T1)	Type of member first.
 		typedef T2	second_type; //	The second template parameter (T2)	Type of member second.
 
-	// Constructors:
-		// default (1)	
-		// pair();
-		// copy (2)	
-		// template<class U, class V> pair (const pair<U,V>& pr);
-		// initialization (3)	
-		// pair (const first_type& a, const second_type& b);
-
-	// relational operators (pair)
-		// (1)	
-		// template <class T1, class T2>
-		//   bool operator== (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs);
-		// (2)	
-		// template <class T1, class T2>
-		//   bool operator!= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs);
-		// (3)	
-		// template <class T1, class T2>
-		//   bool operator<  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs);
-		// (4)	
-		// template <class T1, class T2>
-		//   bool operator<= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs);
-		// (5)	
-		// template <class T1, class T2>
-		//   bool operator>  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs);
-		// (6)	
-		// template <class T1, class T2>
-		//   bool operator>= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs);
-
 		pair () : first(), second() {};
+		
+		template<class U, class V> 
+		pair (const pair<U,V>& pr) : first(pr.first), second(pr.second) {};
 
-		T1 first;
-		T2 second;
+		pair (const first_type& a, const second_type& b) : first(a), second(b) {};
+
+		first_type  first;
+		second_type second;
 	};
 
 	template <class T1, class T2>
@@ -78,19 +79,29 @@ namespace ft {
 		s_tree* right;
 	};
 
-/* 	template<class T1, class T2>
-	class autre {
-		public :
-		autre() { 
-			_index.myPair.t1 = int(1);
-			_index.myPair.t2 = int(2);
-			_index.parent	= NULL;
-			_index.left  	= NULL;
-			_index.right 	= NULL;
-		}
-		private :
-		s_tree<T1, T2> _index; // index de recherche rapide
-    }; */
+
+	// ITERATOR
+
+	  template <class Key, class T, bool isconst = false>
+  struct map_iterator {
+    typedef map_iterator<Key, T, isconst>   self;
+
+    typedef std::ptrdiff_t                  difference_type;
+    typedef std::bidirectional_iterator_tag iterator_category;
+    typedef ft::pair<const Key, T>          value_type;
+    typedef typename choose_type<isconst,const value_type&, value_type&>::type       reference;
+    typedef typename choose_type<isconst,const value_type*, value_type*>::type       pointer;
+    typedef typename choose_type<isconst,const Tree<value_type>*, Tree<value_type>*>::type   nodeptr;
+
+    map_iterator() : ptr_(NULL) {};
+    map_iterator(nodeptr ptr) : ptr_(ptr) {};
+    map_iterator(const map_iterator<Key, T, false> &copy) : ptr_(copy.ptr_) {};
+    map_iterator(const map_iterator<Key, T, true> &copy) : ptr_(copy.ptr_) {};
+
+    virtual ~map_iterator() {};
+
+	    nodeptr ptr_;
+  };
 }
 
 #endif

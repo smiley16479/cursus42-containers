@@ -1,5 +1,5 @@
 
-#include "map.hpp"
+#include "map.hpp" // friend_directory/solalDunckel/includes/
 // #include "./test/friend_directory/solalDunckel/includes/vector.hpp"
 // #include "./test/friend_directory/solalDunckel/includes/vector_iterator.hpp"
 // #include "./test/friend_directory/ska42/Vector.hpp"
@@ -16,15 +16,23 @@ int map_test()
 	ClassTest c(6);
 	
 	std::cout << GREEN "Map Declaration" RESET << std::endl;
-	ft::map<std::string, std::int32_t> map1;
+	ft::map</* const */ char, int> map1;
 	// ft::map<std::string, std::int32_t> map1(a, b);
-	std::cout << map1;
+	// std::cout << map1;
+
+	ft::pair<  char , int> val('B' , 2);
+	val.first = 'B';
+	val.second = 2;
+	// ft::map<char*, int>::iterator it(); //<- tu devrais avoir le msg de construction d'un iterator
+	map1.insert(val);
 	std::cout << GREEN "Ended Normaly" RESET << std::endl;
 	return 0;
 }
 
+#ifndef test
 int main(void)
 {
 	map_test();
 	return 0;
 }
+#endif

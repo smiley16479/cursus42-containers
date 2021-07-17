@@ -18,6 +18,7 @@ int vector_test()
 
 	ft::vector<ClassTest> vec(2, c);
 	ft::vector<ClassTest> vec2(2, b);
+	std::vector<ClassTest> std_vec(2, b);
 	std::cout << YELLOW "Correction operator ==" RESET << std::endl;
 	std::cout << "(vec == vec2) : " << (vec == vec2)  << std::endl;
 	std::cout << "(vec < vec2) : " << (vec2 < vec)  << std::endl;
@@ -51,10 +52,21 @@ int vector_test()
 	// {
 	// 	std::cerr << e.what() << '\n';
 	// }
-
 	std::cout << YELLOW "Correction de max_size()" RESET << std::endl;
 	std::cout << "vec.max_size() : " << vec.max_size() << std::endl;
 	// vec.getNb();
+	std::cout << YELLOW "Correction de assign()" RESET << std::endl;
+
+		for (std::vector<ClassTest>::iterator it = std_vec.begin(), end = std_vec.end(); it != end; ++it)
+		std::cout << *it << "\n";
+	vec.assign(2, b);
+	std_vec.assign(2, b);
+
+	for (std::vector<ClassTest>::iterator it = std_vec.begin(), end = std_vec.end(); it != end; ++it)
+		std::cout << *it << "\n";
+	// for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
+	// 	std::cout << *it << "\n";
+
 	std::cout << YELLOW "Correction de push_back()" RESET << std::endl;
 	vec.push_back(b);
 	for (ft::vector<ClassTest>::iterator it = vec.begin(), end = vec.end(); it != end; ++it)
@@ -160,3 +172,12 @@ int main () {
   return 0;
 }
  */
+
+
+#ifndef test
+int main(void)
+{
+	vector_test();
+	return 0;
+}
+#endif

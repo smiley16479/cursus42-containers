@@ -1,3 +1,4 @@
+#define test
 #include "map.hpp"
 #include "vector.hpp"
 #include "stack.hpp"
