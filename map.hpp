@@ -72,66 +72,19 @@ namespace ft {
 	// typedef typename ft::map< Key, T, Compare, Alloc>::pair<T1, T2> pair;
 	// typedef typename ft::map< Key, T, Compare, Alloc>::s_	
 
-// ITERATORS:
-
-//solal
-    typedef ft::map_iterator<key_type, mapped_type>        iterator;
-    typedef ft::map_iterator<key_type, mapped_type, true>  const_iterator;
-    typedef ft::reverse_iterator<iterator>                 reverse_iterator;
-    typedef ft::reverse_iterator<const_iterator>           const_reverse_iterator;
-//solal
-
-/*    struct iterator
-    {
-		typedef std::forward_iterator_tag	iterator_category;
-		typedef ft::s_tree<Key, T>*	map_iterator; //AJOUT
- 
-		iterator() { std::cout << "test iterator_map default constructor" << std::endl;}
-		iterator(pointer ptr) : _ptr(ptr) { std::cout << "iterator_map default constructor" << std::endl;}
-		// iterator(iterator const & ptr) : _ptr(ptr._ptr) {}
- 
-		pointer getPtr() const { return _ptr; }
-		reference operator*() const { return *_ptr; }
-		pointer operator->() { return _ptr; }
-		map_iterator& operator++() {
-			if (_ptr->parent && _ptr->parent->left)
-				return (_ptr->parent->left);
-			
-		 }
-		// iterator& operator++() { ++_ptr; return *this; }
-		iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
-		iterator& operator--() { --_ptr; return *this; }
-		iterator operator--(int) { iterator tmp = *this; --(*this); return tmp; }
-		// iterator& operator=( iterator & i ) {_ptr(i._ptr); return *this;}
-		iterator& operator+=( iterator & i ) {_ptr += (size_t)i._ptr; return *this;}
-		iterator operator+( iterator & i ) {iterator copie(_ptr); copie += i; return (copie);}
-		iterator& operator-=( iterator & i ) {_ptr -= (size_t)i._ptr; return *this;}
-		iterator operator-( iterator & i ) {iterator copie(_ptr); copie -= i; return (copie);}
-		friend bool operator== (const iterator& a, const iterator& b) { return a._ptr == b._ptr; };
-		friend bool operator!= (const iterator& a, const iterator& b) { return a._ptr != b._ptr; };
- 
-    private:
-        pointer _ptr;
-    }; */
- 
-		typedef iterator	  	  reverse_iterator;
-		typedef const iterator	  const_iterator;
-		typedef const_iterator	  const_reverse_iterator;
- 
-	iterator begin() { s_tree<Key, T> temp = _mapTree;
-		while (temp->left) temp = temp->left;
-		return iterator(temp); }
-	const_iterator begin() const { return this->begin();}
-	iterator end()   { s_tree<Key, T> temp = _mapTree;
-		while (temp->right) temp = temp->right;
-		return iterator(temp); }
-	const_iterator end() const { return this->end();}
-	reverse_iterator rbegin() { return this->end();}
-	const_reverse_iterator rbegin() const { return this->end();}
-	reverse_iterator rend() { return this->begin();}
-	const_reverse_iterator rend() const { return this->begin();}
-
-
+// (ITERATORS:) defini ici plutot que ds map_utils.hpp car _mapTree non accessible ds map_utils
+		iterator begin() { s_tree<Key, T> temp = _mapTree;
+			while (temp->left) temp = temp->left;
+			return iterator(temp); }
+		const_iterator begin() const { return this->begin();}
+		iterator end()   { s_tree<Key, T> temp = _mapTree;
+			while (temp->right) temp = temp->right;
+			return iterator(temp); }
+		const_iterator end() const { return this->end();}
+		reverse_iterator rbegin() { return this->end();}
+		const_reverse_iterator rbegin() const { return this->end();}
+		reverse_iterator rend() { return this->begin();}
+		const_reverse_iterator rend() const { return this->begin();}
 
 //Implemented method and // //NON implemented method
 	//  CONSTRUCTORS
@@ -327,8 +280,8 @@ namespace ft {
 
 	s_tree<Key, T>* addNode(const value_type& val) {
 		s_tree<Key, T>* node = new s_tree<Key, T>;
-		node->myPair->first = val.first;
-		node->myPair->second = val.second;
+		node->myPair.first = val.first;
+		node->myPair.second = val.second;
 		node->left  = NULL;
 		node->right = NULL;
 		return node;

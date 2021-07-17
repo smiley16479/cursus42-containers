@@ -80,28 +80,101 @@ namespace ft {
 	};
 
 
-	// ITERATOR
+// ITERATOR
+template<typename Key, typename T >
+	struct map_iterator
+	{
 
-	  template <class Key, class T, bool isconst = false>
-  struct map_iterator {
-    typedef map_iterator<Key, T, isconst>   self;
+// DEBUT Redefinition des typedef presents ds map.hpp l.49
 
-    typedef std::ptrdiff_t                  difference_type;
-    typedef std::bidirectional_iterator_tag iterator_category;
-    typedef ft::pair<const Key, T>          value_type;
-    typedef typename choose_type<isconst,const value_type&, value_type&>::type       reference;
-    typedef typename choose_type<isconst,const value_type*, value_type*>::type       pointer;
-    typedef typename choose_type<isconst,const Tree<value_type>*, Tree<value_type>*>::type   nodeptr;
+	typedef Key									key_type;	// The first template parameter (Key)	
+	typedef T									mapped_type;	// The second template parameter (T)	
+	typedef ft::pair<const key_type,mapped_type>	value_type;	// pair<const key_type,mapped_type>	
+	// typedef	Compare								key_compare;	// The third template parameter (Compare)	defaults to: less<key_type>
+	//? typedef		value_compare	// Nested function class to compare elements see value_comp -> // http://www.cplusplus.com/reference/map/map/value_comp/
+	// typedef	Alloc								allocator_type;	// The fourth template parameter (Alloc)	defaults to: allocator<value_type>
 
-    map_iterator() : ptr_(NULL) {};
-    map_iterator(nodeptr ptr) : ptr_(ptr) {};
-    map_iterator(const map_iterator<Key, T, false> &copy) : ptr_(copy.ptr_) {};
-    map_iterator(const map_iterator<Key, T, true> &copy) : ptr_(copy.ptr_) {};
+	// typedef allocator_type::reference			reference;	// allocator_type::reference for the default allocator: value_type&
+	typedef	value_type&							reference;	// allocator_type::reference for the default allocator: value_type&
+	typedef const value_type&					const_reference;	// allocator_type::const_reference for the default allocator: const value_type&
+	typedef	value_type*							pointer; //	allocator_type::pointer	for the default allocator: value_type*
+	typedef	const value_type*					const_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
 
-    virtual ~map_iterator() {};
+	typedef	value_type*							iterator;	// a bidirectional iterator to value_type convertible to const_iterator
+	typedef	const value_type*					const_iterator; //	a bidirectional iterator to const value_type	
+	typedef	iterator							reverse_iterator; //	reverse_iterator<iterator>	
+	typedef const reverse_iterator				const_reverse_iterator; //	reverse_iterator<const_iterator>	
+	typedef	ptrdiff_t							difference_type; //	a signed integral type, identical to: iterator_traits<iterator>::difference_type	usually the same as ptrdiff_t
+	typedef	size_t								size_type; //	an unsigned integral type that can represent any non-negative value of difference_type	usually the same as size_t
+// FIN Redefinition des typedef presents ds map.hpp l.49
 
-	    nodeptr ptr_;
-  };
+
+		typedef std::forward_iterator_tag	iterator_category;
+		// typedef ft::s_tree<Key, T>*	map_iterator; //AJOUT
+		// typedef ft::s_tree<Key, T>*	pointer; //AJOUT
+ 
+		map_iterator() { std::cout << "test iterator_map default constructor" << std::endl;}
+		map_iterator(pointer ptr) : _ptr(ptr) { std::cout << "iterator_map default constructor" << std::endl;}
+		// iterator(iterator const & ptr) : _ptr(ptr._ptr) {}
+ 
+		pointer getPtr() const { return _ptr; }
+		reference operator*() const { return *_ptr; }
+		pointer operator->() { return _ptr; }
+		iterator& operator++() {
+			if (_ptr->parent && _ptr->parent->left)
+				return (_ptr->parent->left);
+		}
+		// iterator& operator++() { ++_ptr; return *this; }
+		iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+		iterator& operator--() { --_ptr; return *this; }
+		iterator operator--(int) { iterator tmp = *this; --(*this); return tmp; }
+		// iterator& operator=( iterator & i ) {_ptr(i._ptr); return *this;}
+		iterator& operator+=( map_iterator & i ) {_ptr += (size_t)i._ptr; return *this;}
+		iterator operator+( iterator & i ) {iterator copie(_ptr); copie += i; return (copie);}
+		iterator& operator-=( map_iterator & i ) {_ptr -= (size_t)i._ptr; return *this;}
+		iterator operator-( iterator & i ) {iterator copie(_ptr); copie -= i; return (copie);}
+		friend bool operator== (const map_iterator& a, const map_iterator& b) { return a._ptr == b._ptr; };
+		friend bool operator!= (const map_iterator& a, const map_iterator& b) { return a._ptr != b._ptr; };
+
+
+// (ITERATORS:) defini ds map.hpp car _mapTree non accessible ds map_utils
+/* 		iterator begin() { s_tree<Key, T> temp = _mapTree;
+			while (temp->left) temp = temp->left;
+			return iterator(temp); }
+		const_iterator begin() const { return this->begin();}
+		iterator end()   { s_tree<Key, T> temp = _mapTree;
+			while (temp->right) temp = temp->right;
+			return iterator(temp); }
+		const_iterator end() const { return this->end();}
+		reverse_iterator rbegin() { return this->end();}
+		const_reverse_iterator rbegin() const { return this->end();}
+		reverse_iterator rend() { return this->begin();}
+		const_reverse_iterator rend() const { return this->begin();} */
+	
+	    private:
+	        pointer _ptr;
+			// ft::pair<Key, T> _ptr;
+    }; 
+ 
+		typedef ft::iterator	  	  iterator;
+		typedef iterator	  	  reverse_iterator;
+		typedef const iterator	  const_iterator;
+		typedef const_iterator	  const_reverse_iterator;
+
+
+/* 	iterator begin() { s_tree<Key, T> temp = _mapTree;
+		while (temp->left) temp = temp->left;
+		return iterator(temp); }
+	const_iterator begin() const { return this->begin();}
+	iterator end()   { s_tree<Key, T> temp = _mapTree;
+		while (temp->right) temp = temp->right;
+		return iterator(temp); }
+	const_iterator end() const { return this->end();}
+	reverse_iterator rbegin() { return this->end();}
+	const_reverse_iterator rbegin() const { return this->end();}
+	reverse_iterator rend() { return this->begin();}
+	const_reverse_iterator rend() const { return this->begin();} */
+
 }
 
 #endif
