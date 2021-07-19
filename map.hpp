@@ -59,6 +59,11 @@ namespace ft {
 	typedef	value_type*							pointer; //	allocator_type::pointer	for the default allocator: value_type*
 	typedef	const value_type*					const_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
 
+	typedef ft::map_iterator< Key, T >			iterator;
+	typedef const iterator						const_iterator;
+	typedef iterator	 						reverse_iterator;
+	typedef const_iterator						const_reverse_iterator;
+
 	// typedef									iterator	// a bidirectional iterator to value_type convertible to const_iterator
 	// typedef									const_iterator //	a bidirectional iterator to const value_type	
 	// typedef									reverse_iterator //	reverse_iterator<iterator>	
@@ -189,7 +194,7 @@ namespace ft {
 
 	~map()
 	{
-		std::cout << "Default Map Desstructor" << std::endl;
+		std::cout << "Default Map Destructor" << std::endl;
 		deltree(_mapTree);
 	}
 
@@ -211,28 +216,52 @@ namespace ft {
 	// operator[]
 
 // MODIFIERS:
+
+// The single element versions (1) return a pair, with its member pair::first
+// set to an iterator pointing to either the newly inserted element or to the element with an equivalent key in the map.
+// The pair::second element in the pair is set to true if a new element was inserted or false if an equivalent key already existed.
 	pair<iterator,bool> insert (const value_type& val) {
-		++_size;
 		s_tree<Key, T> *temp = _mapTree;
-		pair<iterator,bool> toRetunrPair;
+		pair<iterator,bool> toReturnPair;
 		while (temp) { // Si on tombe sur la même clefs
 			if (0) { //std::equal<Key>()(val.first, temp->myPair->first)) { 
 				temp->myPair.second = val.second;
 				iterator it(temp);
-				toRetunrPair.first = it;
-				toRetunrPair.second = false;
-				return toRetunrPair;
+				toReturnPair.first = it;
+				toReturnPair.second = false;
+				return toReturnPair;
 			} // Sinon
-			if (std::less<Key>()(val.first, temp->myPair.first))
+			if (std::less<Key>()(val.first, temp->myPair.first)) {
+				if (!temp->left) {
+					temp->left = addNode(val);
+					iterator it(temp->left);
+					toReturnPair.first = it;
+					toReturnPair.second = true;
+					return toReturnPair;
+				}
 				temp = temp->left;
-			else
+			}
+			else {
+				if (!temp->right) {
+					temp->right = addNode(val);
+					iterator it(temp->right);
+					toReturnPair.first = it;
+					toReturnPair.second = true;
+					return toReturnPair;
+				}
 				temp = temp->right;
+			}
 		}
 		temp = addNode(val);
 		iterator it(temp);
-		toRetunrPair.first = it;
-		toRetunrPair.second = false;
-		return toRetunrPair;
+		toReturnPair.first = it;
+		toReturnPair.second = false;
+		return toReturnPair;
+	}
+
+	iterator insert (iterator position, const value_type& val) {
+		pair<iterator,bool> toReturnPair = insert(val);
+		return toReturnPair.first;
 	}
 
 	// to erase
@@ -241,16 +270,17 @@ namespace ft {
 
 	void print_preorder(s_tree<Key, T> * tree) {
 		if (tree) {
-		printf("%d\n",tree->myPair->first);
+		printf("%d\n",tree->myPair.first);
 		print_preorder(tree->left);
 		print_preorder(tree->right);
 		}
 	}
 	
 	void print_inorder(s_tree<Key, T> * tree) {
+		std::cout << "mapTree _ptr : " << tree << std::endl;
 		if (tree) {
 		print_inorder(tree->left);
-		printf("%d\n",tree->myPair->first);
+		printf("%c\n",tree->myPair.first);
 		print_inorder(tree->right);
 		}
 	}
@@ -259,7 +289,7 @@ namespace ft {
 		if (tree) {
 		print_postorder(tree->left);
 		print_postorder(tree->right);
-		printf("%d\n",tree->myPair->first);
+		printf("%d\n",tree->myPair.first);
 		}
 	}
 
@@ -271,6 +301,8 @@ namespace ft {
 		}
 	}
 
+	s_tree<Key, T>	* getTree(){return _mapTree;}
+
 	private:
 
 	key_compare 	_keyCmp;
@@ -280,6 +312,8 @@ namespace ft {
 
 	s_tree<Key, T>* addNode(const value_type& val) {
 		s_tree<Key, T>* node = new s_tree<Key, T>;
+		// s_tree<Key, T>* node  = _allocTp.allocate(_size); // <- essai d'ajout d'allocator perso À VIRER
+		++_size;
 		node->myPair.first = val.first;
 		node->myPair.second = val.second;
 		node->left  = NULL;

@@ -97,13 +97,25 @@ template<typename Key, typename T >
 	// typedef allocator_type::reference			reference;	// allocator_type::reference for the default allocator: value_type&
 	typedef	value_type&							reference;	// allocator_type::reference for the default allocator: value_type&
 	typedef const value_type&					const_reference;	// allocator_type::const_reference for the default allocator: const value_type&
-	typedef	value_type*							pointer; //	allocator_type::pointer	for the default allocator: value_type*
-	typedef	const value_type*					const_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
 
-	typedef	value_type*							iterator;	// a bidirectional iterator to value_type convertible to const_iterator
-	typedef	const value_type*					const_iterator; //	a bidirectional iterator to const value_type	
-	typedef	iterator							reverse_iterator; //	reverse_iterator<iterator>	
-	typedef const reverse_iterator				const_reverse_iterator; //	reverse_iterator<const_iterator>	
+	typedef	s_tree<Key, T>*							pointer; //	allocator_type::pointer	for the default allocator: value_type*
+	typedef	const s_tree<Key, T>*					const_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
+		//
+	// typedef	value_type*							pointer; //	allocator_type::pointer	for the default allocator: value_type*
+	// typedef	const value_type*					const_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
+
+
+	typedef ft::map_iterator< Key, T >			iterator;
+	typedef const iterator						const_iterator;
+	typedef iterator	 						reverse_iterator;
+	typedef const_iterator						const_reverse_iterator;
+		// 
+	// typedef	value_type*							iterator;	// a bidirectional iterator to value_type convertible to const_iterator
+	// typedef	const value_type*					const_iterator; //	a bidirectional iterator to const value_type	
+	// typedef	iterator							reverse_iterator; //	reverse_iterator<iterator>	
+	// typedef const reverse_iterator				const_reverse_iterator; //	reverse_iterator<const_iterator>	
+
+
 	typedef	ptrdiff_t							difference_type; //	a signed integral type, identical to: iterator_traits<iterator>::difference_type	usually the same as ptrdiff_t
 	typedef	size_t								size_type; //	an unsigned integral type that can represent any non-negative value of difference_type	usually the same as size_t
 // FIN Redefinition des typedef presents ds map.hpp l.49
@@ -113,7 +125,7 @@ template<typename Key, typename T >
 		// typedef ft::s_tree<Key, T>*	map_iterator; //AJOUT
 		// typedef ft::s_tree<Key, T>*	pointer; //AJOUT
  
-		map_iterator() { std::cout << "test iterator_map default constructor" << std::endl;}
+		map_iterator() : _ptr(NULL) { std::cout << "test iterator_map default constructor" << std::endl;}
 		map_iterator(pointer ptr) : _ptr(ptr) { std::cout << "iterator_map default constructor" << std::endl;}
 		// iterator(iterator const & ptr) : _ptr(ptr._ptr) {}
  
@@ -124,6 +136,7 @@ template<typename Key, typename T >
 			if (_ptr->parent && _ptr->parent->left)
 				return (_ptr->parent->left);
 		}
+		iterator& operator=(const iterator & i) { if (this->_ptr != i._ptr) _ptr = i._ptr; return *this;} // <- Le = est foireux
 		// iterator& operator++() { ++_ptr; return *this; }
 		iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
 		iterator& operator--() { --_ptr; return *this; }
@@ -156,11 +169,6 @@ template<typename Key, typename T >
 			// ft::pair<Key, T> _ptr;
     }; 
  
-		typedef ft::iterator	  	  iterator;
-		typedef iterator	  	  reverse_iterator;
-		typedef const iterator	  const_iterator;
-		typedef const_iterator	  const_reverse_iterator;
-
 
 /* 	iterator begin() { s_tree<Key, T> temp = _mapTree;
 		while (temp->left) temp = temp->left;
