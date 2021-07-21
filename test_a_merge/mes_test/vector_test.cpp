@@ -57,7 +57,7 @@ int vector_test()
 	// vec.getNb();
 	std::cout << YELLOW "Correction de assign()" RESET << std::endl;
 
-		for (std::vector<ClassTest>::iterator it = std_vec.begin(), end = std_vec.end(); it != end; ++it)
+	for (std::vector<ClassTest>::iterator it = std_vec.begin(), end = std_vec.end(); it != end; ++it)
 		std::cout << *it << "\n";
 	vec.assign(2, b);
 	std_vec.assign(2, b);

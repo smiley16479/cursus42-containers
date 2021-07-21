@@ -98,22 +98,22 @@ template<typename Key, typename T >
 	typedef	value_type&							reference;	// allocator_type::reference for the default allocator: value_type&
 	typedef const value_type&					const_reference;	// allocator_type::const_reference for the default allocator: const value_type&
 
-	typedef	s_tree<Key, T>*							pointer; //	allocator_type::pointer	for the default allocator: value_type*
-	typedef	const s_tree<Key, T>*					const_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
+	typedef	s_tree<Key, T>*						node_pointer; //	allocator_type::pointer	for the default allocator: value_type*
+	typedef	const s_tree<Key, T>*				const_node_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
 		//
-	// typedef	value_type*							pointer; //	allocator_type::pointer	for the default allocator: value_type*
-	// typedef	const value_type*					const_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
+	typedef	value_type*							pointer; //	allocator_type::pointer	for the default allocator: value_type*
+	typedef	const value_type*					const_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
 
 
-	typedef ft::map_iterator< Key, T >			iterator;
-	typedef const iterator						const_iterator;
-	typedef iterator	 						reverse_iterator;
-	typedef const_iterator						const_reverse_iterator;
+	typedef ft::map_iterator< Key, T >			iterator;	// a bidirectional iterator to value_type convertible to const_iterator
+	// typedef const iterator					const_iterator;	//	a bidirectional iterator to const value_type	
+	// typedef iterator	 						reverse_iterator;	//	reverse_iterator<iterator>	
+	// typedef const reverse_iterator			const_reverse_iterator;	//	reverse_iterator<const_iterator>	
 		// 
-	// typedef	value_type*							iterator;	// a bidirectional iterator to value_type convertible to const_iterator
-	// typedef	const value_type*					const_iterator; //	a bidirectional iterator to const value_type	
-	// typedef	iterator							reverse_iterator; //	reverse_iterator<iterator>	
-	// typedef const reverse_iterator				const_reverse_iterator; //	reverse_iterator<const_iterator>	
+	// typedef	value_type*						iterator;	// a bidirectional iterator to value_type convertible to const_iterator
+	// typedef	const iterator					const_iterator; //	a bidirectional iterator to const value_type	
+	// typedef	iterator						reverse_iterator; //	reverse_iterator<iterator>	
+	// typedef	const reverse_iterator			const_reverse_iterator; //	reverse_iterator<const_iterator>	
 
 
 	typedef	ptrdiff_t							difference_type; //	a signed integral type, identical to: iterator_traits<iterator>::difference_type	usually the same as ptrdiff_t
@@ -126,15 +126,17 @@ template<typename Key, typename T >
 		// typedef ft::s_tree<Key, T>*	pointer; //AJOUT
  
 		map_iterator() : _ptr(NULL) { std::cout << "test iterator_map default constructor" << std::endl;}
-		map_iterator(pointer ptr) : _ptr(ptr) { std::cout << "iterator_map default constructor" << std::endl;}
+		map_iterator(node_pointer ptr) : _ptr(ptr) { std::cout << "iterator_map default constructor" << std::endl;}
 		// iterator(iterator const & ptr) : _ptr(ptr._ptr) {}
  
-		pointer getPtr() const { return _ptr; }
-		reference operator*() const { return *_ptr; }
-		pointer operator->() { return _ptr; }
+		node_pointer getPtr() const { return _ptr; }
+		reference operator*() const { return _ptr->myPair; }
+		pointer operator->() { return &(_ptr->myPair); }
 		iterator& operator++() {
 			if (_ptr->parent && _ptr->parent->left)
-				return (_ptr->parent->left);
+				return (/* _ptr->parent->left */ *this);
+			else
+				return (/* that */ *this);
 		}
 		iterator& operator=(const iterator & i) { if (this->_ptr != i._ptr) _ptr = i._ptr; return *this;} // <- Le = est foireux
 		// iterator& operator++() { ++_ptr; return *this; }
@@ -149,7 +151,6 @@ template<typename Key, typename T >
 		friend bool operator== (const map_iterator& a, const map_iterator& b) { return a._ptr == b._ptr; };
 		friend bool operator!= (const map_iterator& a, const map_iterator& b) { return a._ptr != b._ptr; };
 
-
 // (ITERATORS:) defini ds map.hpp car _mapTree non accessible ds map_utils
 /* 		iterator begin() { s_tree<Key, T> temp = _mapTree;
 			while (temp->left) temp = temp->left;
@@ -163,11 +164,11 @@ template<typename Key, typename T >
 		const_reverse_iterator rbegin() const { return this->end();}
 		reverse_iterator rend() { return this->begin();}
 		const_reverse_iterator rend() const { return this->begin();} */
-	
+
 	    private:
-	        pointer _ptr;
+			node_pointer _ptr; 
 			// ft::pair<Key, T> _ptr;
-    }; 
+	}; 
  
 
 /* 	iterator begin() { s_tree<Key, T> temp = _mapTree;

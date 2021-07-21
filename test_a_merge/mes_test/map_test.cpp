@@ -6,7 +6,7 @@
 // #include "./test/friend_directory/ska42/IteratorVector.hpp"
 #include "ClassTest.hpp"
 #include "colors.h"
-#include <vector>
+#include <map>
 #include <iostream>
 
 int map_test()
@@ -20,7 +20,7 @@ int map_test()
 	// ft::map<std::string, std::int32_t> map1(a, b);
 	// std::cout << map1;
 
-	ft::pair<  char , int> val('B' , 2);
+	ft::pair<char , int> val('B' , 2);
 	// ft::map<char*, int>::iterator it(); //<- tu devrais avoir le msg de construction d'un iterator
 	std::cout << GREEN "Map Insert" RESET << std::endl;
 	std::cout << "mapTree _ptr : " << map1.getTree() << std::endl;
@@ -40,6 +40,17 @@ int map_test()
 
 	std::cout << GREEN "Map print_inorder" RESET << std::endl;
 	map1.print_inorder(map1.getTree());
+
+
+//Verification d'it avec une map officielle
+	// std::map<char,int> off_map1;
+	// std::pair<char , int> off_val('B' , 2);
+	// off_map1.insert(off_val);
+	// std::map<char, int>::iterator it = off_map1.begin();
+
+	for (ft::map<char , int>::iterator it = map1.begin(), end = map1.end(); it != end; ++it)
+		std::cout << "le petit it nous donne : " <<  it->first << "\n";
+
 	std::cout << GREEN "Ended Normaly" RESET << std::endl;
 	return 0;
 }

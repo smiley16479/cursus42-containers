@@ -78,11 +78,11 @@ namespace ft {
 	// typedef typename ft::map< Key, T, Compare, Alloc>::s_	
 
 // (ITERATORS:) defini ici plutot que ds map_utils.hpp car _mapTree non accessible ds map_utils
-		iterator begin() { s_tree<Key, T> temp = _mapTree;
+		iterator begin() { s_tree<Key, T> *temp = _mapTree;
 			while (temp->left) temp = temp->left;
 			return iterator(temp); }
 		const_iterator begin() const { return this->begin();}
-		iterator end()   { s_tree<Key, T> temp = _mapTree;
+		iterator end()   { s_tree<Key, T> *temp = _mapTree;
 			while (temp->right) temp = temp->right;
 			return iterator(temp); }
 		const_iterator end() const { return this->end();}
@@ -224,7 +224,7 @@ namespace ft {
 		s_tree<Key, T> *temp = _mapTree;
 		pair<iterator,bool> toReturnPair;
 		while (temp) { // Si on tombe sur la même clefs
-			if (0) { //std::equal<Key>()(val.first, temp->myPair->first)) { 
+			if (val.first == temp->myPair.first) { 
 				temp->myPair.second = val.second;
 				iterator it(temp);
 				toReturnPair.first = it;
@@ -264,6 +264,12 @@ namespace ft {
 		return toReturnPair.first;
 	}
 
+template <class InputIterator>
+	void insert (InputIterator first, InputIterator last) {
+		for (; first != last; ++first)
+			insert(*first);
+	}
+
 	// to erase
 	Key getStr() { return _mapTree->myPair.first;}
 
@@ -277,7 +283,9 @@ namespace ft {
 	}
 	
 	void print_inorder(s_tree<Key, T> * tree) {
-		std::cout << "mapTree _ptr : " << tree << std::endl;
+		// #ifdef _DEBUG_
+		// 	std::cout << "mapTree _ptr : " << tree << std::endl;
+		// #endif
 		if (tree) {
 		print_inorder(tree->left);
 		printf("%c\n",tree->myPair.first);
