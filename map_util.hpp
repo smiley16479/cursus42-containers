@@ -4,28 +4,119 @@
 namespace ft {
 
 
-/*   template <class T1, class T2> // pair de Solal
-  struct pair {
-    typedef T1   first_type;
-    typedef T2   second_type;
+template <class T>
 
-    pair() : first(), second() {};
-    pair (const first_type &a, const second_type &b) : first(a), second(b) {};
+  struct less {
+    typedef bool  result_type;
+    typedef T     first_argument_type;
+    typedef T     second_argument_type;
 
-    template<class U, class V>
-    pair (const pair<U, V> &pr) : first(pr.first), second(pr.second) {};
+    bool operator() (const T &lhs, const T &rhs) const { return lhs < rhs; };
+  };
 
-    ~pair() {};
+  template <class Compare, class T>
+  class Comp {
+   public:
+    Comp(Compare c) : comp_(c) {};
 
-    pair<T1, T2>  &operator= (const pair<T1, T2> &pr) {
-      first = pr.first;
-      second = pr.second;
-      return *this;
-    };
+    bool operator()(const T& x, const T& y) const { return comp_(x.first, y.first); };
 
-    first_type  first;
-    second_type second;
-  }; */
+    Compare comp_;
+  };
+
+  // ALLOCATOR
+
+  template <class T>
+  class allocator {
+   public:
+    typedef T        value_type;
+    typedef T*       pointer;
+    typedef const T* const_pointer;
+    typedef T&       reference;
+    typedef const T& const_reference;
+    typedef std::size_t    size_type;
+    typedef std::ptrdiff_t difference_type;
+
+    template <class U>
+    struct rebind { typedef ft::allocator<U> other; };
+
+    // return address of values
+    pointer address (reference value) const { return &value; }
+    const_pointer address (const_reference value) const { return &value; }
+
+    allocator() throw() {}
+    allocator(const allocator&) throw() {}
+
+    template <class U>
+    allocator (const allocator<U>&) throw() {}
+
+    ~allocator() throw() {}
+
+    size_type max_size () const throw() { return std::numeric_limits<std::size_t>::max() / sizeof(T); }
+
+    pointer allocate (size_type num, const void* = 0) {
+      return reinterpret_cast<pointer>(::operator new(num * sizeof (T)));
+    }
+
+    void construct (pointer p, const T& value) {
+      new(p) T(value);
+    }
+
+    void destroy (pointer p) {
+      p->~T();
+    }
+
+    void deallocate (pointer p, size_type) {
+      ::operator delete(p);
+    }
+    bool operator== (const allocator&) throw() { return true; }
+    bool operator!= (const allocator &a) throw() { return !operator==(a); }
+  };
+
+  // ENABLE_IF / IS_INTEGRAL
+
+  template<bool B, class T = void>
+  struct enable_if {};
+
+  template<class T>
+  struct enable_if<true, T> { typedef T type; };
+
+  template <typename T>
+  struct is_integral { static const bool value = false; };
+
+  template <>
+  struct is_integral<bool> { static const bool value = true; };
+
+  template <>
+  struct is_integral<char> { static const bool value = true; };
+
+  template <>
+  struct is_integral<short> { static const bool value = true; };
+
+  template <>
+  struct is_integral<int> { static const bool value = true; };
+
+  template <>
+  struct is_integral<long> { static const bool value = true; };
+
+  template <>
+  struct is_integral<long long> { static const bool value = true; };
+
+  template <>
+  struct is_integral<unsigned char> { static const bool value = true; };
+
+  template <>
+  struct is_integral<unsigned short> { static const bool value = true; };
+
+  template <>
+  struct is_integral<unsigned int> { static const bool value = true; };
+
+  template <>
+  struct is_integral<unsigned long> { static const bool value = true; };
+
+  template <>
+  struct is_integral<unsigned long long> { static const bool value = true; };
+
 
 	template <typename T1, typename T2>
 	struct pair
@@ -39,6 +130,12 @@ namespace ft {
 		pair (const pair<U,V>& pr) : first(pr.first), second(pr.second) {};
 
 		pair (const first_type& a, const second_type& b) : first(a), second(b) {};
+
+		pair<T1, T2>  &operator= (const pair<T1, T2> &pr) {
+			first = pr.first;
+			second = pr.second;
+			return *this;
+		};
 
 		first_type  first;
 		second_type second;
@@ -68,12 +165,17 @@ namespace ft {
 	  bool operator>= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
 	{ return !(lhs<rhs); }
 
-	template<class T1, class T2>
+  template <class T1, class T2>
+  ft::pair<T1, T2> make_pair(T1 t, T2 u) {
+    return ft::pair<T1, T2>(t, u);
+  };
+
+	template<class U>
 	struct s_tree
 	{
 		// typename ft::map< Key, T, Compare, Alloc>:: ;
 		// ft::map<Key , T , Compare, Alloc>::
-		pair<T1, T2> myPair;
+		U myPair;
 		s_tree* parent;
 		s_tree* left;
 		s_tree* right;
@@ -98,8 +200,8 @@ template<typename Key, typename T >
 	typedef	value_type&							reference;	// allocator_type::reference for the default allocator: value_type&
 	typedef const value_type&					const_reference;	// allocator_type::const_reference for the default allocator: const value_type&
 
-	typedef	s_tree<Key, T>*						node_pointer; //	allocator_type::pointer	for the default allocator: value_type*
-	typedef	const s_tree<Key, T>*				const_node_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
+	typedef	s_tree<value_type>*						node_pointer; //	allocator_type::pointer	for the default allocator: value_type*
+	typedef	const s_tree<value_type>*				const_node_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
 		//
 	typedef	value_type*							pointer; //	allocator_type::pointer	for the default allocator: value_type*
 	typedef	const value_type*					const_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
@@ -125,19 +227,64 @@ template<typename Key, typename T >
 		// typedef ft::s_tree<Key, T>*	map_iterator; //AJOUT
 		// typedef ft::s_tree<Key, T>*	pointer; //AJOUT
  
-		map_iterator() : _ptr(NULL) { std::cout << "test iterator_map default constructor" << std::endl;}
-		map_iterator(node_pointer ptr) : _ptr(ptr) { std::cout << "iterator_map default constructor" << std::endl;}
+		map_iterator() : _ptr(NULL) { std::cout << "iterator_map default constructor" << std::endl;}
+		map_iterator(node_pointer ptr) : _ptr(ptr) { std::cout << "iterator_map parametric constructor" << std::endl;}
 		// iterator(iterator const & ptr) : _ptr(ptr._ptr) {}
  
 		node_pointer getPtr() const { return _ptr; }
 		reference operator*() const { return _ptr->myPair; }
 		pointer operator->() { return &(_ptr->myPair); }
+
+/* 		iterator& operator++() {
+// SERT À REMONTER LES BRANCHES DROITES
+		// if (_ptr) {
+		std::cout << RED "Debut::operator++ _ptr : " << _ptr <<  ", _ptr->parent : " << _ptr->parent << RESET << std::endl;
+			if (!_ptr->left && !_ptr->right) {
+				std::cout <<  "operator++(if (!_ptr->left && !_ptr->right)) _ptr->left: " << _ptr->left <<  ", _ptr->right : " << _ptr->right << std::endl;
+				while (_ptr->parent != NULL && _ptr->parent->right == _ptr)
+					_ptr = _ptr->parent;
+// JUSQU'AU BOUT...Si nécessaire
+					if (!_ptr->parent && (_ptr = _ptr->parent))
+						return (*this);
+				}
+			// }
+// SERT À NAVIGER DS LES BRANCHES
+			if (_ptr) {
+				std::cout <<  "operator++(if (_ptr)) _ptr : " << _ptr <<  ", _ptr->parent : " << _ptr->parent << std::endl;
+				if (_ptr->right) {
+					_ptr = _ptr->right;
+					while (_ptr->left)
+						_ptr = _ptr->left;
+					std::cout << RED "Fin:operator++() _ptr : " << _ptr <<  ", _ptr->parent : " << _ptr->parent << RESET << std::endl;
+					return *this;
+				}
+				// _ptr->parent = _ptr->parent->parent;
+				// _ptr->right = _ptr->parent->right;
+				// _ptr->left = _ptr->parent->left;
+				_ptr = _ptr->parent;
+				std::cout << RED "Fin:operator++() _ptr : " << _ptr <<  ", _ptr->parent : " << _ptr->parent << RESET << std::endl;
+				return (*this);
+			}
+			return (*this);
+		} */
+
 		iterator& operator++() {
-			if (_ptr->parent && _ptr->parent->left)
-				return (/* _ptr->parent->left */ *this);
-			else
-				return (/* that */ *this);
+			if (_ptr) {
+				if (_ptr->right && (_ptr = _ptr->right))
+					while (_ptr->left)
+						_ptr = _ptr->left;
+				else if (!_ptr->left && !_ptr->right) {
+					while (_ptr->parent != NULL && _ptr->parent->right == _ptr)
+						_ptr = _ptr->parent;
+	// JUSQU'AU BOUT...Si nécessaire
+						if (!_ptr->parent && (_ptr = _ptr->parent))
+							return (*this);
+				}
+			}
+
+			return (*this);
 		}
+
 		iterator& operator=(const iterator & i) { if (this->_ptr != i._ptr) _ptr = i._ptr; return *this;} // <- Le = est foireux
 		// iterator& operator++() { ++_ptr; return *this; }
 		iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }

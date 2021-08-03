@@ -16,7 +16,7 @@ T f(T i)
 }
 
 namespace ft {
-
+// https://openclassrooms.com/fr/courses/1894236-programmez-avec-le-langage-c/1903999-creez-des-templates
   template <typename T> // ne fonctionne pas si cette structure n'est pas prealablement defini
   struct is_integral { static const bool value = false; };
 

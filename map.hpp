@@ -28,23 +28,11 @@ namespace ft {
 	template < class Key,                                     // map::key_type
            class T,                                       // map::mapped_type
            class Compare = std::less<Key>,                     // map::key_compare
-           class Alloc = std::allocator<ft::pair<const Key,T> >    // map::allocator_type
+           class Alloc = ft::allocator<ft::pair<const Key,T> >    // map::allocator_type
            > class map
 	{
 
 	public:
-
-// Why is there no redefinition error (already difined in map_utils.hpp) if I uncomment this struct ?
-/* 	template<class T1, class T2>
-	struct s_tree
-	{
-		// typename ft::map< Key, T, Compare, Alloc>:: ;
-		// ft::map<Key , T , Compare, Alloc>::
-		pair<T1, T2> myPair;
-		s_tree* parent;
-		s_tree* left;
-		s_tree* right;
-	}; */
 
 	typedef Key									key_type;	// The first template parameter (Key)	
 	typedef T									mapped_type;	// The second template parameter (T)	
@@ -78,13 +66,13 @@ namespace ft {
 	// typedef typename ft::map< Key, T, Compare, Alloc>::s_	
 
 // (ITERATORS:) defini ici plutot que ds map_utils.hpp car _mapTree non accessible ds map_utils
-		iterator begin() { s_tree<Key, T> *temp = _mapTree;
+		iterator begin() { s_tree<value_type> *temp = _mapTree;
 			while (temp->left) temp = temp->left;
 			return iterator(temp); }
 		const_iterator begin() const { return this->begin();}
-		iterator end()   { s_tree<Key, T> *temp = _mapTree;
+		iterator end()   { s_tree<value_type> *temp = _mapTree;
 			while (temp->right) temp = temp->right;
-			return iterator(temp); }
+			return iterator(); }
 		const_iterator end() const { return this->end();}
 		reverse_iterator rbegin() { return this->end();}
 		const_reverse_iterator rbegin() const { return this->end();}
@@ -164,15 +152,14 @@ namespace ft {
 // BEGIN IMPLEMENTATION
 	// Constructs an empty container, with no elements.
 	explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-	: _keyCmp(comp), _allocTp(alloc), _size(0)
+	: _keyCmp(comp), _allocTp(alloc), _size(0), _mapTree(NULL)
 	{
-		std::cout << "Default Map Constructor" << std::endl;
-		_mapTree = new s_tree<Key, T>;
-		_mapTree->myPair.first = 'f';
-		_mapTree->myPair.second = int(2);
-		_mapTree->parent = NULL;
-		_mapTree->left = NULL;
-		_mapTree->right = NULL;
+		#ifdef _DEBUG_
+			std::cout << "Default Map Constructor" << std::endl;
+		#endif
+		// _mapTree = new s_tree<value_type>;
+		// _mapTree  = _alloc_node.allocate(1);
+		// _allocTp.construct(&_mapTree->myPair, value_type());
 	}
 
 	// Constructs a container with as many elements as the range [first,last), 
@@ -183,6 +170,8 @@ namespace ft {
 		// autre<T1, T2>::_index = new s_tree<T1, T2>;
 		// _index = new s_tree<T1, T2>;
 		std::cout << "InputIterator Map Constructor" << std::endl;
+		for (;first != last; ++first)
+			addNode(*first);
 	}
 
 	// Constructs a container with a copy of each of the elements in x.
@@ -221,10 +210,10 @@ namespace ft {
 // set to an iterator pointing to either the newly inserted element or to the element with an equivalent key in the map.
 // The pair::second element in the pair is set to true if a new element was inserted or false if an equivalent key already existed.
 	pair<iterator,bool> insert (const value_type& val) {
-		s_tree<Key, T> *temp = _mapTree;
+		s_tree<value_type> *temp = _mapTree;
 		pair<iterator,bool> toReturnPair;
 		while (temp) { // Si on tombe sur la même clefs
-			if (val.first == temp->myPair.first) { 
+			if (val.first == temp->myPair.first) {
 				temp->myPair.second = val.second;
 				iterator it(temp);
 				toReturnPair.first = it;
@@ -232,8 +221,9 @@ namespace ft {
 				return toReturnPair;
 			} // Sinon
 			if (std::less<Key>()(val.first, temp->myPair.first)) {
-				if (!temp->left) {
+				if (!temp->left) { std::cout << RED "ds Insert less\n" RESET;
 					temp->left = addNode(val);
+					temp->left->parent = temp;
 					iterator it(temp->left);
 					toReturnPair.first = it;
 					toReturnPair.second = true;
@@ -242,8 +232,9 @@ namespace ft {
 				temp = temp->left;
 			}
 			else {
-				if (!temp->right) {
+				if (!temp->right) { std::cout << RED "ds Insert more\n" RESET;
 					temp->right = addNode(val);
+					temp->right->parent = temp;
 					iterator it(temp->right);
 					toReturnPair.first = it;
 					toReturnPair.second = true;
@@ -251,8 +242,10 @@ namespace ft {
 				}
 				temp = temp->right;
 			}
-		}
-		temp = addNode(val);
+		} // S'il n'y a pas d'éléments et que temp == NULL
+		std::cout << RED "ds Insert S'il n'y a pas d'éléments\n" RESET;
+		_mapTree = addNode(val);
+		_mapTree->parent = NULL;
 		iterator it(temp);
 		toReturnPair.first = it;
 		toReturnPair.second = false;
@@ -274,34 +267,37 @@ template <class InputIterator>
 	Key getStr() { return _mapTree->myPair.first;}
 
 
-	void print_preorder(s_tree<Key, T> * tree) {
+	void print_preorder(s_tree<value_type> * tree) {
 		if (tree) {
-		printf("%d\n",tree->myPair.first);
+		// printf("%d\n",tree->myPair.first);
+		print_ptrs(tree);
 		print_preorder(tree->left);
 		print_preorder(tree->right);
 		}
 	}
 	
-	void print_inorder(s_tree<Key, T> * tree) {
+	void print_inorder(s_tree<value_type> * tree) {
 		// #ifdef _DEBUG_
-		// 	std::cout << "mapTree _ptr : " << tree << std::endl;
+		// 	std::cout << "inorder _ptr : " << tree;
 		// #endif
 		if (tree) {
 		print_inorder(tree->left);
-		printf("%c\n",tree->myPair.first);
+		print_ptrs(tree);
+		// printf("inorder _ptr : %p, %c\n", tree, tree->myPair.first);
 		print_inorder(tree->right);
 		}
 	}
 	
-	void print_postorder(s_tree<Key, T> * tree) {
+	void print_postorder(s_tree<value_type> * tree) {
 		if (tree) {
 		print_postorder(tree->left);
 		print_postorder(tree->right);
-		printf("%d\n",tree->myPair.first);
+		// printf("%d\n",tree->myPair.first);
+		print_ptrs(tree);
 		}
 	}
 
-	void deltree(s_tree<Key, T> * tree) {
+	void deltree(s_tree<value_type> * tree) {
 		if (tree) {
 		  deltree(tree->left);
 		  deltree(tree->right);
@@ -309,21 +305,31 @@ template <class InputIterator>
 		}
 	}
 
-	s_tree<Key, T>	* getTree(){return _mapTree;}
+	void print_ptrs(s_tree<value_type> * tree) {
+		if (tree) {
+			std::cout << CYAN "_ptr : " << tree << " " << tree->myPair.first << "::" << tree->myPair.second << std::endl << 
+			"_ptr_parent : " << tree->parent << "_ptr_left : " << tree->left << 
+			"_ptr_right : " << tree->right << RESET << std::endl;
+		}
+	}
+
+	s_tree<value_type>	* getTree(){return _mapTree;}
 
 	private:
 
 	key_compare 	_keyCmp;
 	allocator_type 	_allocTp;
 	size_type		_size;
-	s_tree<Key, T>	*_mapTree;
+	s_tree<value_type>	*_mapTree;
 
-	s_tree<Key, T>* addNode(const value_type& val) {
-		s_tree<Key, T>* node = new s_tree<Key, T>;
-		// s_tree<Key, T>* node  = _allocTp.allocate(_size); // <- essai d'ajout d'allocator perso À VIRER
+// TYPE DEFINI SPECIFIQUEMENT POUR L'ALLOCATION DE NOEUDS
+    typename allocator_type::template rebind<s_tree<value_type>>::other _alloc_node;
+
+	s_tree<value_type>* addNode(const value_type& val) {
+		// s_tree<value_type>* node = new s_tree<value_type>;
+		s_tree<value_type>* node  = _alloc_node.allocate(1);
 		++_size;
-		node->myPair.first = val.first;
-		node->myPair.second = val.second;
+		_allocTp.construct(&node->myPair, val);
 		node->left  = NULL;
 		node->right = NULL;
 		return node;
