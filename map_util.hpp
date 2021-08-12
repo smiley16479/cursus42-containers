@@ -227,69 +227,87 @@ template<typename Key, typename T >
 		// typedef ft::s_tree<Key, T>*	map_iterator; //AJOUT
 		// typedef ft::s_tree<Key, T>*	pointer; //AJOUT
  
-		map_iterator() : _ptr(NULL) { std::cout << "iterator_map default constructor" << std::endl;}
-		map_iterator(node_pointer ptr) : _ptr(ptr) { std::cout << "iterator_map parametric constructor" << std::endl;}
+		map_iterator() : _ptr(NULL), _previous_ptr(NULL) {std::cout << "iterator_map default constructor" << std::endl;}
+		map_iterator(node_pointer ptr) : _ptr(ptr) , _previous_ptr(NULL) {_endNode = getHighest(_ptr); std::cout << "iterator_map parametric constructor" << std::endl;}
 		// iterator(iterator const & ptr) : _ptr(ptr._ptr) {}
  
 		node_pointer getPtr() const { return _ptr; }
 		reference operator*() const { return _ptr->myPair; }
 		pointer operator->() { return &(_ptr->myPair); }
 
-/* 		iterator& operator++() {
-// SERT À REMONTER LES BRANCHES DROITES
-		// if (_ptr) {
-		std::cout << RED "Debut::operator++ _ptr : " << _ptr <<  ", _ptr->parent : " << _ptr->parent << RESET << std::endl;
-			if (!_ptr->left && !_ptr->right) {
-				std::cout <<  "operator++(if (!_ptr->left && !_ptr->right)) _ptr->left: " << _ptr->left <<  ", _ptr->right : " << _ptr->right << std::endl;
-				while (_ptr->parent != NULL && _ptr->parent->right == _ptr)
-					_ptr = _ptr->parent;
-// JUSQU'AU BOUT...Si nécessaire
-					if (!_ptr->parent && (_ptr = _ptr->parent))
-						return (*this);
-				}
-			// }
-// SERT À NAVIGER DS LES BRANCHES
-			if (_ptr) {
-				std::cout <<  "operator++(if (_ptr)) _ptr : " << _ptr <<  ", _ptr->parent : " << _ptr->parent << std::endl;
-				if (_ptr->right) {
-					_ptr = _ptr->right;
-					while (_ptr->left)
-						_ptr = _ptr->left;
-					std::cout << RED "Fin:operator++() _ptr : " << _ptr <<  ", _ptr->parent : " << _ptr->parent << RESET << std::endl;
-					return *this;
-				}
-				// _ptr->parent = _ptr->parent->parent;
-				// _ptr->right = _ptr->parent->right;
-				// _ptr->left = _ptr->parent->left;
-				_ptr = _ptr->parent;
-				std::cout << RED "Fin:operator++() _ptr : " << _ptr <<  ", _ptr->parent : " << _ptr->parent << RESET << std::endl;
-				return (*this);
-			}
-			return (*this);
-		} */
-
 		iterator& operator++() {
 			if (_ptr) {
-				if (_ptr->right && (_ptr = _ptr->right))
-					while (_ptr->left)
+// POUR TOOGLE ENTRE LE DERNIER ELEMENT ET LE END 
+				if (_previous_ptr == _endNode) {//std::cout << RED << "POUR TOOGLE ENTRE LE DERNIER ELEMENT ET LE END" << RESET << std::endl;
+					_previous_ptr = _endNode->parent;
+					_ptr = _endNode;
+					return (*this);
+				}
+// 	POUR ALLER TT A GAUCHE D'UNE BRANCHE DE DROITE OU POUR DESCENDRE D'UNE BRANCHE VERS LA DROITE
+				if (_ptr->right && _ptr->right != _previous_ptr && (_ptr = _ptr->right)) {
+//std::cout << RED << "TEST1::a_previous_ptr" << _previous_ptr->myPair.first << RESET << std::endl;
+					_previous_ptr = _ptr;
+					while (_ptr->left) {
 						_ptr = _ptr->left;
-				else if (!_ptr->left && !_ptr->right) {
-					while (_ptr->parent != NULL && _ptr->parent->right == _ptr)
+						_previous_ptr = _ptr;
+					}
+//std::cout << RED << "TEST1::b_previous_ptr" << _previous_ptr->myPair.first << RESET << std::endl;
+					return (*this);
+				}
+// POUR REMONTER D'UNE BRANCHE
+				else if (!_ptr->left && !_ptr->right && _ptr->parent) {
+//std::cout << RED << "TEST2::a _previous_ptr" << _previous_ptr->myPair.first << "highest : " << this->getHighest(_ptr)->myPair.first << RESET << std::endl;
+					if (_previous_ptr == _endNode) {
+						this->_ptr = _previous_ptr->parent;
+						return (*this);
+					}
+					if (_ptr->parent && _ptr->parent->left == _ptr) {
 						_ptr = _ptr->parent;
-	// JUSQU'AU BOUT...Si nécessaire
-						if (!_ptr->parent && (_ptr = _ptr->parent))
+						_previous_ptr = _ptr;
+					if (_ptr->left == _endNode) //<- On en a tester les _ptr
+//std::cout << RED << "TEST2::b" << RESET << std::endl;
+						return (*this);
+					}
+					else if (_ptr->parent && _ptr->parent->right == _ptr)
+					{
+//std::cout << RED << "TEST2::c" << RESET << std::endl;
+						while (_ptr->parent && _ptr->parent->right == _ptr )
+						{
+							_ptr = _ptr->parent;
+							_previous_ptr = _ptr;
+						}
+						if (_ptr->parent && _ptr->parent->left == _ptr) {						
+							_ptr = _ptr->parent;
+							_previous_ptr = _ptr;
+						}
+						return (*this);
+					}
+				}
+// POUR REMONTER DE TOUS LES NOEUDS DE DROITE
+				else if (!_ptr->right) {
+//std::cout << RED << "TEST3" << RESET << std::endl;
+					while (_ptr->parent != NULL && _ptr->parent->right == _ptr) {
+						_previous_ptr = _ptr;
+						_ptr = _ptr->parent;
+					}
+// JUSQU'AU BOUT...Si nécessaire
+						if (_ptr->parent && (_ptr = _ptr->parent))
 							return (*this);
+						else {
+							_ptr = _ptr->parent;
+							return (*this);
+						}
 				}
 			}
-
+//std::cout << RED << "TEST5 : Return sans rien faire, _ptr->right : " << _ptr->right << RESET << std::endl;
 			return (*this);
 		}
 
-		iterator& operator=(const iterator & i) { if (this->_ptr != i._ptr) _ptr = i._ptr; return *this;} // <- Le = est foireux
 		// iterator& operator++() { ++_ptr; return *this; }
 		iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
 		iterator& operator--() { --_ptr; return *this; }
 		iterator operator--(int) { iterator tmp = *this; --(*this); return tmp; }
+		iterator& operator=(const iterator & i) { if (this->_ptr != i._ptr) _ptr = i._ptr; return *this;} // <- Le = est foireux
 		// iterator& operator=( iterator & i ) {_ptr(i._ptr); return *this;}
 		iterator& operator+=( map_iterator & i ) {_ptr += (size_t)i._ptr; return *this;}
 		iterator operator+( iterator & i ) {iterator copie(_ptr); copie += i; return (copie);}
@@ -311,10 +329,25 @@ template<typename Key, typename T >
 		const_reverse_iterator rbegin() const { return this->end();}
 		reverse_iterator rend() { return this->begin();}
 		const_reverse_iterator rend() const { return this->begin();} */
+		node_pointer getLowest(node_pointer node) {
+			while (node->parent)
+				node = node->parent;
+			while (node->left)
+				node = node->left;
+			return node;
+		}
 
-	    private:
-			node_pointer _ptr; 
-			// ft::pair<Key, T> _ptr;
+		node_pointer getHighest(node_pointer node) {
+			while (node->parent)
+				node = node->parent;
+			while (node->right)
+				node = node->right;
+			return node;
+		}
+	    // private:
+			node_pointer _ptr;
+			node_pointer _previous_ptr;
+			node_pointer _endNode;
 	}; 
  
 

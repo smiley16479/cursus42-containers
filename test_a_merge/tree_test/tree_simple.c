@@ -76,7 +76,7 @@ void remove_node(node* nd)
 }
 
 void delete_tree(node* root)
-{// Delete the whole thing
+{// Delete the whole tree
 	if (root->right) delete_tree(root->right);
 	if (root->left) delete_tree(root->left);
 	free(root);
@@ -85,7 +85,7 @@ void delete_tree(node* root)
 void print_inorder(node* tree) {
 	if (tree) {
 		print_inorder(tree->left);
-		printf("inorder _ptr : %p, %d\n", tree, tree->data);
+		printf("prnt :%14p, self : %14p, left :%14p, right :%14p, %d\n", tree->parnt, tree, tree->left, tree->right, tree->data);
 		print_inorder(tree->right);
 	}
 }
@@ -98,7 +98,12 @@ int main(int argc, char const *argv[])
 	insert_node(root, 4);
 	node *to_delete = insert_node(root, 8);
 	insert_node(root, 18);
-	delete_node(to_delete);
+	insert_node(root, 16);
+	insert_node(root, 2);
+	insert_node(root, 3);
+	insert_node(root, 7);
+	insert_node(root, 5);
+	remove_node(to_delete);
 	print_inorder(root);
 	delete_tree(root);
 	return 0;

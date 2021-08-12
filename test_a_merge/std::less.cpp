@@ -15,9 +15,10 @@ bool f(A a, B b, U u = U())
 int main(/* int argc, char const *argv[] */)
 {
 	char * str1 = "allo"; //1; (h =>104)
-	char * str2 = "alloa"; //2; (a =>97)
+	char * str2 = "allo"; //2; (a =>97)
 	printf("str1_ptr : %p, str2_ptr : %p\n", str1, str2);
 	std::cout << std::less<char *>()(str1,str2) << '\n';
+	std::cout << std::less<int>()(1, 2) << '\n';
 	// std::less<char *>(str1, str2);
 
 	return 0;
