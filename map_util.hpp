@@ -307,7 +307,14 @@ template<typename Key, typename T >
 		iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
 		iterator& operator--() { --_ptr; return *this; }
 		iterator operator--(int) { iterator tmp = *this; --(*this); return tmp; }
-		iterator& operator=(const iterator & i) { if (this->_ptr != i._ptr) _ptr = i._ptr; return *this;} // <- Le = est foireux
+		iterator& operator=(const iterator & i) {
+			if (this->_ptr != i._ptr) { std::cout << "it_operator=\n";
+				_ptr = i._ptr;
+				_endNode = i._endNode;
+				_previous_ptr = i._previous_ptr;
+			}
+			return *this;
+		} // <- Le = est foireux
 		// iterator& operator=( iterator & i ) {_ptr(i._ptr); return *this;}
 		iterator& operator+=( map_iterator & i ) {_ptr += (size_t)i._ptr; return *this;}
 		iterator operator+( iterator & i ) {iterator copie(_ptr); copie += i; return (copie);}

@@ -10,7 +10,7 @@
 #include <iostream>
 
 
-int map_test()
+int my_map_test()
 {
 	ClassTest a(4);
 	ClassTest b(5);
@@ -44,13 +44,13 @@ int map_test()
 	map1.insert(val);
 	val.first = 75;
 	val.second = 75;
-	ft::map<int , int>::iterator it_to_erase1 = map1.insert(val).first;
+	map1.insert(val).first;
 	val.first = 37;
 	val.second = 37;
 	map1.insert(val);
 	val.first = 33;
 	val.second = 33;
-	map1.insert(val).first;
+	ft::map<int , int>::iterator it_to_erase2 = map1.insert(val).first;
 	val.first = 35;
 	val.second = 35;
 	map1.insert(val).first;
@@ -77,7 +77,7 @@ int map_test()
 	map1.insert(val);
 	val.first = 38;
 	val.second = 38;
-	ft::map<int , int>::iterator it_to_erase2 =  map1.insert(val).first;
+	ft::map<int , int>::iterator it_to_erase1 =  map1.insert(val).first;
 	val.first = 40;
 	val.second = 40;
 	map1.insert(val);
@@ -95,7 +95,7 @@ int map_test()
 	// std::cout << "map1.upper_bound(41) : " << map1.upper_bound(41)->first << std::endl; 
 
 	map1.erase (it_to_erase1, it_to_erase2);
-	// map1.print2dTree(map1.getTree(), 0);
+	map1.print2dTree(map1.getTree(), 0);
 
 	// count
 	// lower_bound 
@@ -125,23 +125,93 @@ int map_test()
 	++it;
 	std::cout << "Puis le petit it nous donne : " << it->first << "::" << it->second << "\n";
 
-//Verification d'it avec une map officielle
-/* 	std::map<char,int> off_map1;
-	std::pair<char , int> off_val('c' , 3);
+
+
+	std::cout << GREEN "Ended Normaly" RESET << std::endl;
+	return 0;
+}
+
+void offcial_map_test();
+
+
+#ifndef test
+int main(void)
+{
+	my_map_test();
+	return 0;
+}
+
+
+void offcial_map_test()
+{//Verification d'it avec une map officielle
+	std::map<int,int> off_map1;
+	std::pair<int , int> off_val(100, 100);
+ 	off_map1.insert(off_val);
+	off_val.first = 200;
+	off_val.second = 200;
 	off_map1.insert(off_val);
-	off_val.first = 'b';
-	off_val.second = 2;
+	off_val.first = 400;
+	off_val.second = 400;
 	off_map1.insert(off_val);
-	off_val.first = 'a';
-	off_val.second = 1;
+	off_val.first = 800;
+	off_val.second = 800;
 	off_map1.insert(off_val);
+	off_val.first = 50;
+	off_val.second = 50;
+	off_map1.insert(off_val);
+	off_val.first = 25;
+	off_val.second = 25;
+	off_map1.insert(off_val);
+	off_val.first = 75;
+	off_val.second = 75;
+	std::map<int , int>::iterator it_to_erase2 = off_map1.insert(off_val).first;
+	off_val.first = 37;
+	off_val.second = 37;
+	off_map1.insert(off_val);
+	off_val.first = 33;
+	off_val.second = 33;
+	off_map1.insert(off_val).first;
+	off_val.first = 35;
+	off_val.second = 35;
+	off_map1.insert(off_val).first;
+	off_val.first = 43;
+	off_val.second = 43;
+	off_map1.insert(off_val);
+	off_val.first = 28;
+	off_val.second = 28;
+	off_map1.insert(off_val);
+	off_val.first = 39;
+	off_val.second = 39;
+	off_map1.insert(off_val);
+	off_val.first = 47;
+	off_val.second = 47;
+	off_map1.insert(off_val);
+	off_val.first = 30;
+	off_val.second = 30;
+	off_map1.insert(off_val);
+	off_val.first = 32;
+	off_val.second = 32;
+	off_map1.insert(off_val);
+	off_val.first = 31;
+	off_val.second = 31;
+	off_map1.insert(off_val);
+	off_val.first = 38;
+	off_val.second = 38;
+	std::map<int , int>::iterator it_to_erase1 =  off_map1.insert(off_val).first;
+	off_val.first = 40;
+	off_val.second = 40;
+	off_map1.insert(off_val);
+
+	off_map1.erase (it_to_erase1, it_to_erase2);
+
+
 	// std::map<char, int>::iterator it = off_map1.begin();
-	std::map<char , int>::iterator end = off_map1.end();
+	std::map<int , int>::iterator end = off_map1.end();
 	std::cout << end._M_node->_M_parent << std::endl;
 	std::cout << end._M_node->_M_right << std::endl;
 	std::cout << end._M_node->_M_left << std::endl;
-	std::map<char , int>::iterator off_it = off_map1.begin();
-	for (std::map<char , int>::iterator end = off_map1.end(); off_it != end; ++off_it) {
+	std::map<int , int>::iterator off_it = off_map1.begin();
+	for (std::map<int , int>::iterator end = off_map1.end(); off_it != end; ++off_it) {
 		std::cout << "le petit off_it nous donne : " <<  off_it->second << "\n";
 	}
 	// off_val.first = 'd';
@@ -150,16 +220,9 @@ int map_test()
 	// --off_it;
 	// ++off_it;
 	// off_it = std::map<char , int>::iterator();
-	std::cout << "le petit off_it nous donne : " <<  off_it->first << "::" <<  off_it->second << "\n"; */
-
-	std::cout << GREEN "Ended Normaly" RESET << std::endl;
-	return 0;
+	std::cout << "le petit off_it nous donne : " <<  off_it->first << "::" <<  off_it->second << "\n";
 }
 
-#ifndef test
-int main(void)
-{
-	map_test();
-	return 0;
-}
+
+
 #endif

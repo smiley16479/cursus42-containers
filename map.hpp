@@ -338,8 +338,8 @@ template <class InputIterator>
 	}
 	
 	void erase (iterator first, iterator last) {
-		while (first != last && first != this->end()) {
-			std::cout << "erase first : " << first.getPtr() << std::endl;
+		while (first != last) {
+			// std::cout << "erase first : " << first.getPtr() << std::endl;
 			iterator tmp = first++;
 			erase(tmp);
 		}
