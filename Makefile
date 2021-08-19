@@ -49,6 +49,9 @@ $(NAME)	: $(OBJ)
 debug : $(NAME)
 	@./$(NAME)
 
+test :
+	./launch_test.sh
+
 clean	:
 	@rm -rf $(OBJ_DIR)
 

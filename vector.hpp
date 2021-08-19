@@ -7,9 +7,10 @@
 // #include </usr/include/c++/6/bits/stl_iterator_base_types.h>
 // #include </usr/include/c++/6/bits/stl_algobase.h>
 
+#include "vector_utils.hpp"
 #define vAddedMem 16 // better when power of 2
 
-#define _DEBUG_
+// #define _DEBUG_
 #ifdef _DEBUG_
 #include <iostream>
 #include "colors.h"
@@ -21,53 +22,29 @@ namespace ft {
 	class vector
 	{
 	private:
-			_T *_tab;
-			unsigned int _size;
-			unsigned int _capacity; // real_size
-			unsigned int _Zindx; // Zero index où le vector commence pour améliorer l'insertion (par défault au 1/4 du define vAddedMem)
-			_Alloc& _allocator;
-			// vector::size_type i;
+
+	_T *_tab;
+	unsigned int _size;
+	unsigned int _capacity; // real_size
+	unsigned int _Zindx; // Zero index où le vector commence pour améliorer l'insertion (par défault au 1/4 du define vAddedMem)
+	_Alloc& _allocator;
 
 	public:
 
-		typedef _Alloc			  allocator_type;		//	Type d'allocateur par default celui de la STD
-		typedef _T				  value_type;			//
-		typedef	_T*				  pointer;				//	Pointer to element
-		typedef	_T&				  reference;			//	Reference to element
-		typedef	const _T*		  const_pointer;		//	Pointer to constant element
-		typedef	const _T&		  const_reference;		//	Reference to constant element
-		typedef size_t			  size_type;			//	Quantities of elements
-		typedef	ptrdiff_t		  difference_type;		//	Difference between two pointers
-
-   struct iterator // https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp
-    {
-		typedef std::forward_iterator_tag	iterator_category;
-
-        iterator(pointer ptr) : _ptr(ptr) { std::cout << "iterator_vector default constructor" << std::endl;}
-        // iterator(iterator const & ptr) : _ptr(ptr._ptr) {}
-
-		pointer getPtr() const { return _ptr; }
-        reference operator*() const { return *_ptr; }
-        pointer operator->() { return _ptr; }
-        iterator& operator++() { ++_ptr; return *this; }
-        iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
-		iterator& operator--() { --_ptr; return *this; }
-        iterator operator--(int) { iterator tmp = *this; --(*this); return tmp; }
-		// iterator& operator=( iterator & i ) {_ptr(i._ptr); return *this;}
-		iterator& operator+=( iterator & i ) {_ptr += (size_t)i._ptr; return *this;}
-        iterator operator+( iterator & i ) {iterator copie(_ptr); copie += i; return (copie);}
-		iterator& operator-=( iterator & i ) {_ptr -= (size_t)i._ptr; return *this;}
-        iterator operator-( iterator & i ) {iterator copie(_ptr); copie -= i; return (copie);}
-        friend bool operator== (const iterator& a, const iterator& b) { return a._ptr == b._ptr; };
-        friend bool operator!= (const iterator& a, const iterator& b) { return a._ptr != b._ptr; };
-
-    private:
-        pointer _ptr;
-    };
-
-		typedef iterator	  	  reverse_iterator;
-		typedef const iterator	  const_iterator;
-		typedef const_iterator	  const_reverse_iterator;
+	typedef _Alloc			  allocator_type;		//	Type d'allocateur par default celui de la STD
+	typedef _T				  value_type;			//
+	typedef	_T*				  pointer;				//	Pointer to element
+	typedef	_T&				  reference;			//	Reference to element
+	typedef	const _T*		  const_pointer;		//	Pointer to constant element
+	typedef	const _T&		  const_reference;		//	Reference to constant element
+	typedef size_t			  size_type;			//	Quantities of elements
+	typedef	ptrdiff_t		  difference_type;		//	Difference between two pointers
+		
+// Iterator séparé de vector.hpp et placé ds vector_utils.hpp
+	typedef ft::iterator<_T>  iterator;
+	typedef iterator	  	  reverse_iterator;
+	typedef const iterator	  const_iterator;
+	typedef const_iterator	  const_reverse_iterator;
 
 	iterator begin() { return iterator(&_tab[0]); }
 	const_iterator begin() const { return iterator(&_tab[0]); }
@@ -161,7 +138,7 @@ namespace ft {
 		_tab = const_cast<allocator_type&>(alloc).allocate(_capacity);
 	}
 
-	explicit vector (size_type n, const value_type& val, const allocator_type& alloc = allocator_type())
+	explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 	: _size(n),
 	_capacity(_size * 1.5 >= vAddedMem ? _size * 1.5 : vAddedMem),
 	_allocator(const_cast<allocator_type&>(alloc))
@@ -185,7 +162,9 @@ namespace ft {
 		#endif
 	}
 
-	vector (const vector& x) {*this = x;}
+	vector (const vector& x) 
+	: _size(0), _capacity(vAddedMem), _allocator(const_cast<allocator_type&>(x._allocator))
+	{*this = x;}
 
 	vector& operator=(const vector& x)
 	{
@@ -193,7 +172,7 @@ namespace ft {
 		std::cout << "vector Assignment operator called" << std::endl;
 		#endif
 		if ( this != &x ) {
-			/* ft::vector<_T, _Alloc >:: */this->~vector(); // cannot use "delete this;" bcoz new wasn't use eventhought it is used by the std::allocator
+			this->~vector(); // cannot use "delete this;" bcoz new wasn't use eventhought it is used by the std::allocator
  			_size = x._size;
 			_capacity = x._capacity;
 			_allocator = x._allocator;
@@ -325,7 +304,9 @@ namespace ft {
 	}
 
 	void push_back (const value_type& val) {
-		reserve(_size + 1);
+      if (_size + 1 > _capacity)
+		reserve(_capacity * 2);
+	else
 		_tab[_size++] = val;
 	}
 // Removes the last element in the vector, effectively reducing the container size by one. This destroys the removed element.

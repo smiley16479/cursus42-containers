@@ -10,7 +10,7 @@
 // #include </usr/include/c++/6/bits/stl_algobase.h>
 
 
-#define _DEBUG_
+// #define _DEBUG_
 #ifdef _DEBUG_
 #include <iostream>
 #include "colors.h"
@@ -39,72 +39,85 @@ namespace ft {
 
 	// Default Constructor
 	explicit stack(const container_type& ctnr = container_type())
-	// : _c(ctnr) // _size(0), _capacity(vAddedMem), _allocator(const_cast<allocator_type&>(alloc)) // cannot use this as the operator= won't be called in this case
+	// : c(ctnr) // _size(0), _capacity(vAddedMem), _allocator(const_cast<allocator_type&>(alloc)) // cannot use this as the operator= won't be called in this case
 	{
-		_c = ctnr;
+		c = ctnr;
 		#ifdef _DEBUG_
 		std::cout << "stack Default Constructor called" << std::endl;
 		#endif
 	}
 
 	bool empty() const {
-		if (_c.empty())
+		if (c.empty())
 			return (true);
 		return (false);
 	}
 
 	size_type size() const {
-		return ( _c.size() );
+		return ( c.size() );
 	}
 	
 	value_type& top() {
-		return ( _c[_c.size() - 1] );
+		return ( c[c.size() - 1] );
 	}
 
 	value_type& top() const {
-		return ( _c[_c.size() - 1] );
+		return ( c[c.size() - 1] );
 	}
 
 	void push (const value_type& val) {
-		_c.push_back(val);
+		c.push_back(val);
 	}
 
 	void pop() {
-		_c.pop_back();
+		c.pop_back();
 	}
 
+template <class value_type, class container_type>
+ friend bool operator== (const stack<value_type,container_type>& lhs, const stack<value_type,container_type>& rhs);
+template <class value_type, class container_type>
+ friend bool operator!= (const stack<value_type,container_type>& lhs, const stack<value_type,container_type>& rhs);
+template <class value_type, class container_type>
+ friend bool operator<  (const stack<value_type,container_type>& lhs, const stack<value_type,container_type>& rhs); 
+template <class value_type, class container_type>
+ friend bool operator<= (const stack<value_type,container_type>& lhs, const stack<value_type,container_type>& rhs);
+template <class value_type, class container_type>
+ friend bool operator>  (const stack<value_type,container_type>& lhs, const stack<value_type,container_type>& rhs);
+template <class value_type, class container_type>
+ friend bool operator>= (const stack<value_type,container_type>& lhs, const stack<value_type,container_type>& rhs);
+
 	protected :
-	container_type _c;
+	container_type c;
 	};
 // (1)
 template <class T, class Container>
   bool operator== (const stack<T,Container>& lhs, const stack<T,Container>& rhs) {
-	  return ( lhs._c == rhs._c );
+	  return ( lhs.c == rhs.c );
   }
 // (2)
 template <class T, class Container>
   bool operator!= (const stack<T,Container>& lhs, const stack<T,Container>& rhs) {
-	  return ( lhs._c != rhs._c );
+	  return ( lhs.c != rhs.c );
   }
 // (3)
 template <class T, class Container>
   bool operator<  (const stack<T,Container>& lhs, const stack<T,Container>& rhs) {
-	  return ( lhs._c < rhs._c );
+	  return ( lhs.c < rhs.c );
   }
 // (4)
 template <class T, class Container>
   bool operator<= (const stack<T,Container>& lhs, const stack<T,Container>& rhs) {
-	  return ( lhs._c <= rhs._c );
+	  return ( lhs.c <= rhs.c );
   }
 // (5)
 template <class T, class Container>
   bool operator>  (const stack<T,Container>& lhs, const stack<T,Container>& rhs) {
-	  return ( lhs._c > rhs._c );
+	  return ( lhs.c > rhs.c );
   }
 // (6)
 template <class T, class Container>
   bool operator>= (const stack<T,Container>& lhs, const stack<T,Container>& rhs) {
-	  return ( lhs._c >= rhs._c );
+	  return ( lhs.c >= rhs.c );
   }
 
 }
