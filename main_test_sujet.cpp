@@ -3,7 +3,7 @@
 #include <deque>
 #include <time.h>
 
-#if 0 //CREATE A REAL STL EXAMPLE
+#if 1 //CREATE A REAL STL EXAMPLE
 	#include <map>
 	#include <stack>
 	#include <vector>
@@ -13,16 +13,16 @@
 	#include "stack.hpp"
 	#include "vector.hpp"
 	#define _MES_TESTS_
-/*
+/* 
 	#define _SOLAL_ 1
  	#include "friend_directory/solalDunckel/includes/map.hpp"
 	#include "friend_directory/solalDunckel/includes/stack.hpp"
-	#include "friend_directory/solalDunckel/includes/vector.hpp" /**/
+	#include "friend_directory/solalDunckel/includes/vector.hpp" /* */
 #endif
 
 #include <stdlib.h>
 
-#define MAX_RAM 536870912 // 4294967296
+#define MAX_RAM /* 536870912 // */ 4294967296
 #define BUFFER_SIZE 4096
 struct Buffer
 {

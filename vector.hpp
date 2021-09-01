@@ -8,6 +8,7 @@
 // #include </usr/include/c++/6/bits/stl_algobase.h>
 
 #include "vector_utils.hpp"
+#include "enable_if_is_integral.hpp"
 #define vAddedMem 16 // better when power of 2
 
 // #define _DEBUG_
@@ -41,18 +42,18 @@ namespace ft {
 	typedef	ptrdiff_t		  difference_type;		//	Difference between two pointers
 		
 // Iterator séparé de vector.hpp et placé ds vector_utils.hpp
-	typedef ft::iterator<_T>  iterator;
-	typedef iterator	  	  reverse_iterator;
-	typedef const iterator	  const_iterator;
-	typedef const_iterator	  const_reverse_iterator;
+	typedef typename ft::iterator<_T>  iterator;
+	typedef typename ft::const_iterator<_T> const_iterator;
+	typedef typename ft::reverse_iterator<_T>	reverse_iterator;
+	typedef typename ft::reverse_iterator<const _T>	const_reverse_iterator;
 
 	iterator begin() { return iterator(&_tab[0]); }
-	const_iterator begin() const { return iterator(&_tab[0]); }
+	const_iterator begin() const { return const_iterator(&_tab[0]); }
 	iterator end()   { return iterator(&_tab[_size]); }
-	const_iterator end() const { return iterator(&_tab[_size]); }
-	reverse_iterator rbegin() { return iterator(&_tab[_size]); }
+	const_iterator end() const { return const_iterator(&_tab[_size]); }
+	reverse_iterator rbegin() { return iterator(&_tab[_size - 1]); }
 	const_reverse_iterator rbegin() const { return iterator(&_tab[_size]); }
-	reverse_iterator rend() { return iterator(&_tab[0]); }
+	reverse_iterator rend() { return iterator(&_tab[-1]); }
 	const_reverse_iterator rend() const { return iterator(&_tab[0]); }
 
 /* List Des 
@@ -148,22 +149,25 @@ namespace ft {
 		#endif
 		_tab = _allocator.allocate(_capacity);
 		for (size_t i = 0; i < _size; i++)
-			_tab[i] = val; // new(&_tab[i]) _T(val); appelle le constructeur voir exemple 3 https://www.cplusplus.com/reference/new/operator%20new/
+			new(&_tab[i]) _T(val); /* _tab[i] = val; */ // appelle le constructeur voir exemple 3 https://www.cplusplus.com/reference/new/operator%20new/
 	} 
 
 	template <class InputIterator>
-	vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
-	: _size(last - first),
+	vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
+				typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
+	: _size(0),
 	_capacity(_size * 1.5 >= vAddedMem ? _size * 1.5 : vAddedMem),
 	_allocator(const_cast<allocator_type&>(alloc))
-	{
+	{// problem se declenche sur deux int , ne reconnait pas le type inputIterator
 		#ifdef _DEBUG_
-		std::cout << "vector Size Constructor called (Not implemented yet)" << std::endl;
+			std::cout << "vector InputIterator Constructor called, last - first : " << (last - first)  << std::endl;
 		#endif
+		_tab = _allocator.allocate(_capacity);
+		insert(begin(), first, last);
 	}
 
 	vector (const vector& x) 
-	: _size(0), _capacity(vAddedMem), _allocator(const_cast<allocator_type&>(x._allocator))
+	: _tab(NULL), _size(0), _capacity(0), _allocator(const_cast<allocator_type&>(x._allocator))
 	{*this = x;}
 
 	vector& operator=(const vector& x)
@@ -192,8 +196,6 @@ namespace ft {
 			_allocator.destroy(&_tab[i]);
 		_allocator.deallocate(_tab, _capacity);
 	}
-
-	/* Iterators: */
 
 	/* Capacity: */
 
@@ -251,7 +253,7 @@ namespace ft {
 			size_t capacity = ( n + vAddedMem <= maxSize ) ? n + vAddedMem : n;
 			_T* tmpTab_ = _allocator.allocate(capacity);
 			for (size_t i = 0; i < _size; ++i)
-				tmpTab_[i] = _tab[i];
+				new(&tmpTab_[i]) _T(_tab[i]);
 			// ft::vector<_T, _Alloc >::~vector(); // cannot use "delete this;" bcoz new wasn't use eventhought it is used by the std::allocator
 			this->~vector();
 			_capacity = capacity;
@@ -280,8 +282,8 @@ namespace ft {
 // Returns a reference to the last element in the vector.
 // Unlike member vector::end, which returns an iterator just past this element, this function returns a direct reference.
 // Calling this function on an empty container causes undefined behavior.
-	reference back() {return (_tab[_size]);};
-	const_reference back() const {return (_tab[_size]);};
+	reference back() {return (_tab[_size - 1]);};
+	const_reference back() const {return (_tab[_size - 1]);};
 
 	/* MODIFIERS */
 
@@ -302,11 +304,13 @@ namespace ft {
 		while (n--)
 			push_back(val);
 	}
-
+// Adds a new element at the end of the vector, after its current last element. The content of val is copied (or moved) to the new element.
+// This effectively increases the container size by one, which causes an automatic reallocation of the allocated storage space 
+// if -and only if- the new vector size surpasses the current vector capacity.
 	void push_back (const value_type& val) {
       if (_size + 1 > _capacity)
 		reserve(_capacity * 2);
-	else
+	// else
 		_tab[_size++] = val;
 	}
 // Removes the last element in the vector, effectively reducing the container size by one. This destroys the removed element.
@@ -339,8 +343,8 @@ namespace ft {
 			capacity = _capacity;
 		_T* tmpTab_ = _allocator.allocate(capacity);
 		for (long i = 0; i < ptr_diff; ++i)
-			tmpTab_[i] = _tab[i];
-		tmpTab_[ptr_diff] = val;
+			new(&tmpTab_[i]) _T(_tab[i]); // tmpTab_[i] = _tab[i];
+		new(&tmpTab_[ptr_diff]) _T(val); //tmpTab_[ptr_diff] = val;
 		size_t i = 0;
 		for (iterator end = this->end(); position != end; ++position, ++i)
 			tmpTab_[ptr_diff + 1 + i] = *position;
@@ -361,7 +365,7 @@ namespace ft {
 	void insert (iterator position, InputIterator first, InputIterator last) {
 		for (; first != last; ++first, ++position) {
 			#ifdef _DEBUG_
-			std::cout << RED << "first : " << first.getPtr() << " last : " << last.getPtr() << RESET << std::endl;
+			//std::cout << RED << "first : " << first.getPtr() << " last : " << last.getPtr() << RESET << std::endl;
 			#endif
 			position = insert(position, *first);
 		}
@@ -430,7 +434,7 @@ template <class T, class Alloc>
 	bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 		size_t i = 0, j = rhs.size();
 		if (lhs.size() == rhs.size()) {
-			for (typename ft::vector<T>::iterator it1 = lhs.begin(), it2 = rhs.begin(); i < j; ++i, ++it1, ++it2)
+			for (typename ft::vector<T>::const_iterator it1 = lhs.begin(), it2 = rhs.begin(); i < j; ++i, ++it1, ++it2)
 				if (!(*it1 == *it2))
 					return (false);
 		}
@@ -445,12 +449,15 @@ template <class T, class Alloc>
 	}
 
 template <class T, class Alloc>
-	bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
-		size_t i = 0, j = rhs.size();
-			for (typename ft::vector<T>::iterator it1 = lhs.begin(), it2 = rhs.begin(); i < j; ++i, ++it1, ++it2)
-				if (*it1 < *it2)
-					return (true);
-		return (false);
+	bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {	//	size_t i = 0, j = rhs.size();
+		typename ft::vector<T>::const_iterator it1 = lhs.begin(), it2 = rhs.begin();
+		while (it1!=lhs.end())
+		{
+			if (it2==rhs.end() || *it2<*it1) return false;
+			else if (*it1<*it2) return true;
+			++it1; ++it2;
+		}
+		return (it2!=rhs.end());
 	}
 
 template <class T, class Alloc>
@@ -475,8 +482,8 @@ template <class T, class Alloc>
 	  return ;
   }
 
-template <typename _T, typename _Alloc>
-	std::ostream & operator<<(std::ostream & o, typename ft::vector<_T, _Alloc>::iterator const & i) { o << (size_t)i.getPtr(); return o;}
+// template <typename _T, typename _Alloc>
+	// std::ostream & operator<<(std::ostream & o, typename ft::vector<_T, _Alloc>::iterator const & i) { o << (size_t)i.getPtr(); return o;}
 	// std::ostream & operator<<(std::ostream & o, typename vector<_T>::iterator const & i) { o << i.getPtr(); return o;}
 
 // template <typename _T, typename _Alloc>

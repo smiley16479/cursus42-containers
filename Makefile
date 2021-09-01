@@ -13,16 +13,20 @@
 NAME = tester.out
 COMPILER = g++
 
+DEF_OFF = off
+DEF_PERS = binary_out
 SRC_DIR = .
 OBJ_DIR = obj
-HDR_DIR = test_a_merge/mes_test\
+HDR_DIR = ./mes_test\
 			.
 
 SRC = 			main.cpp
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))
 
-#CFLAG = -g3 -fsanitize=address -Wall -Wextra -Werror
+CFLAG = -g3 -fsanitize=address -Wall -Wextra -Werror -std=c++98
+
+CFLAG_AUTO = -g3 -fsanitize=address -Wall -Wextra -Werror
 
 all		: $(NAME)
 
@@ -40,17 +44,23 @@ show	:
 
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp
 	@mkdir -p $(OBJ_DIR)
-	$(COMPILER) $(CFLAG) $(foreach file, $(HDR_DIR),-I$(file)) -c $< -o $@
+	$(COMPILER) $(CFLAG_AUTO) $(foreach file, $(HDR_DIR),-I$(file)) -c $< -o $@
 
 $(NAME)	: $(OBJ)
 	@$(COMPILER) $(OBJ) $(CFLAG) -o $@
-
 
 debug : $(NAME)
 	@./$(NAME)
 
 test :
-	./launch_test.sh
+	$(COMPILER) $(CFLAG_AUTO) -D$(DEF_PERS) $(foreach file, $(HDR_DIR),-I$(file)) $(SRC) -o $(NAME)
+	@./$(NAME)
+	@rm -rf $(OBJ_DIR)
+	$(COMPILER) $(CFLAG_AUTO) -D$(DEF_PERS) -D$(DEF_OFF) $(foreach file, $(HDR_DIR),-I$(file)) $(SRC) -o $(NAME)
+	@./$(NAME)
+	diff vectorTest_*
+	diff stackTest_*
+	diff mapTest_*
 
 clean	:
 	@rm -rf $(OBJ_DIR)

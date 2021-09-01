@@ -137,7 +137,7 @@ template <typename T>
   // }
 
 template <typename T>
-  struct tabite_traits{
+  struct essai_traits{
     typedef size_t bool_gauche;
 
   };
@@ -251,9 +251,8 @@ template <typename T>
   }
 
 template <typename T>
-  struct tabite_traits{
+  struct essai_traits{
     typedef size_t bool_gauche;
-
   };
 
 int main() {

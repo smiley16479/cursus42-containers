@@ -1,3 +1,6 @@
+/* 
+MAP CONÇU AVEC UNE LISTE CHAINÉE PLUTOT QU'UN ARBRE BINAIRE
+*/
 #ifndef MAP_HPP
 #define MAP_HPP
 
@@ -5,11 +8,11 @@
 #include <limits>
 #include <stddef.h>
 #include <string>
-#include <iostream>
 
 // #define _DEBUG_
-#ifdef _DEBUG_
+	#include <iostream>
 	#include "colors.h"
+#ifdef _DEBUG_
 #endif
 
 #include "map_util copy.hpp"
@@ -35,46 +38,42 @@ namespace ft {
 
 	public:
 
-	typedef Key									key_type;	// The first template parameter (Key)	
-	typedef T									mapped_type;	// The second template parameter (T)	
+	typedef Key										key_type;	// The first template parameter (Key)	
+	typedef T										mapped_type;	// The second template parameter (T)	
 	typedef ft::pair<const key_type,mapped_type>	value_type;	// pair<const key_type,mapped_type>	
-	typedef	Compare								key_compare;	// The third template parameter (Compare)	defaults to: less<key_type>
-    typedef ft::Comp<Compare, value_type>		value_compare;// Nested function class to compare elements see value_comp -> // http://www.cplusplus.com/reference/map/map/value_comp/
-	typedef	Alloc								allocator_type;	// The fourth template parameter (Alloc)	defaults to: allocator<value_type>
+	typedef	Compare									key_compare;	// The third template parameter (Compare)	defaults to: less<key_type>
+    typedef ft::Comp<Compare, value_type>			value_compare;// Nested function class to compare elements see value_comp -> // http://www.cplusplus.com/reference/map/map/value_comp/
+	typedef	Alloc									allocator_type;	// The fourth template parameter (Alloc)	defaults to: allocator<value_type>
 	
-	// typedef allocator_type::reference		reference;	// allocator_type::reference for the default allocator: value_type&
-	typedef	value_type&							reference;	// allocator_type::reference for the default allocator: value_type&
-	typedef const value_type&					const_reference;	// allocator_type::const_reference for the default allocator: const value_type&
-	typedef	value_type*							pointer; //	allocator_type::pointer	for the default allocator: value_type*
-	typedef	const value_type*					const_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
+	typedef typename allocator_type::reference		reference;	// allocator_type::reference for the default allocator: value_type&
+	// typedef	value_type&							reference;	// allocator_type::reference for the default allocator: value_type&
+	typedef typename allocator_type::const_reference	const_reference;	// allocator_type::reference for the default allocator: value_type&
+	// typedef const value_type&						const_reference;	// allocator_type::const_reference for the default allocator: const value_type&
+	typedef	typename allocator_type::pointer		pointer; //	allocator_type::pointer	for the default allocator: value_type*
+	// typedef	value_type*							pointer; //	allocator_type::pointer	for the default allocator: value_type*
+	typedef	typename allocator_type::const_pointer		const_pointer; //	allocator_type::pointer	for the default allocator: value_type*
+	// typedef	const value_type*						const_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
 
-	typedef ft::map_iterator< Key, T >			iterator;
-	typedef const iterator						const_iterator;
-	typedef iterator	 						reverse_iterator;
-	typedef const_iterator						const_reverse_iterator;
+	typedef ft::map_iterator< Key, T >				iterator;  // a bidirectional iterator to value_type convertible to const_iterator
+	typedef ft::const_map_iterator< const Key, const T >	const_iterator; //	a bidirectional iterator to const value_type	
+	
+	typedef ft::reverse_iterator<iterator>			reverse_iterator;
+	// typedef iterator	 						reverse_iterator; //	reverse_iterator<iterator>	
+	typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator; 
+	// typedef const_iterator						const_reverse_iterator; //	reverse_iterator<const_iterator>	
 
-	// typedef									iterator	// a bidirectional iterator to value_type convertible to const_iterator
-	// typedef									const_iterator //	a bidirectional iterator to const value_type	
-	// typedef									reverse_iterator //	reverse_iterator<iterator>	
-	// typedef									const_reverse_iterator //	reverse_iterator<const_iterator>	
 	typedef	ptrdiff_t							difference_type; //	a signed integral type, identical to: iterator_traits<iterator>::difference_type	usually the same as ptrdiff_t
 	typedef	size_t								size_type; //	an unsigned integral type that can represent any non-negative value of difference_type	usually the same as size_t
 
-	// typename ft::map< Key, T, Compare, Alloc>:: ;
-
-	// typedef typename std::stack<T>::container_type::iterator iterator;
-	// typedef typename ft::map< Key, T, Compare, Alloc>::pair<T1, T2> pair;
-	// typedef typename ft::map< Key, T, Compare, Alloc>::s_	
-
 // (ITERATORS:) defini ici plutot que ds map_utils.hpp car _listBegin non accessible ds map_utils
 		iterator begin() { return iterator(_listBegin->right); }
-		const_iterator begin() const { return iterator(_listBegin->right);}
 		iterator end()   { return iterator(_listBegin); }
-		const_iterator end() const { return iterator(_listBegin);}
-		reverse_iterator rbegin() { return --(this->end());}
-		const_reverse_iterator rbegin() const { return --(this->end());}
-		reverse_iterator rend() { return this->begin();}
-		const_reverse_iterator rend() const { return this->begin();}
+		const_iterator begin() const { return const_iterator(_listBegin->right);}
+		const_iterator end() const { return const_iterator(_listBegin);}
+		reverse_iterator rbegin() { return reverse_iterator(--(this->end()));}
+		reverse_iterator rend() { return reverse_iterator(this->begin());}
+		const_reverse_iterator rbegin() const { return const_reverse_iterator(--(this->end()));}
+		const_reverse_iterator rend() const { return const_reverse_iterator(this->begin());}
 
 //Implemented method and // //NON implemented method
 	//  CONSTRUCTORS
@@ -214,8 +213,8 @@ namespace ft {
 		#ifdef _DEBUG_
 			std::cout << "test operator= entre map<key, T>\n";
 		#endif
-		iterator it = x.begin();
-		iterator end = x.end();
+		typename map<Key, T>::const_iterator it = x.begin();
+		typename map<Key, T>::const_iterator end = x.end();
 		this->clear();
 		this->insert(/* x.begin() */it,/* x.end() */end);
 		return (*this);
@@ -249,7 +248,7 @@ namespace ft {
 			std::cout << GREEN "val.first : " << val.first << " temp->right->myPair.first : " <<
 			temp->right->myPair.first << "\n" RESET;
 		#endif
-		if (val.first == temp->right->myPair.first)
+		if (temp->right != _listBegin && val.first == temp->right->myPair.first)
 		{ 
 			#ifdef _DEBUG_
 				std::cout << RED "ds Insert si la clef existe déjà\n" RESET;
@@ -258,8 +257,11 @@ namespace ft {
 			iterator it(temp->right);
 			toReturnPair.first = it;
 			toReturnPair.second = false;
-		} else
-			return addElementList(temp->right, val);
+		} else{
+			#ifdef _DEBUG_
+				std::cout << RED "ds Insert si on ajout un élément\n" RESET;
+			#endif
+			return addElementList(temp->right, val);}
 		return toReturnPair;
 	}
 
@@ -270,11 +272,10 @@ namespace ft {
 	}
 
 template <class InputIterator>
-	void insert (InputIterator first, InputIterator last) {
+	void insert (InputIterator first, InputIterator last) {std::cout << "inert input" << std::endl;
 		for (; first != last; ++first)
 			insert(*first);
 	}
-
 
 	void erase (iterator position) {
 		#ifdef _DEBUG_
@@ -395,33 +396,6 @@ template <class InputIterator>
 	allocator_type get_allocator() const {
 		return allocator_type();
 	}
-
-	void delist() {
-		#ifdef _DEBUG_
-			std::cout << "listBegin : " << _listBegin << std::endl;
-		#endif
-		s_tree<value_type> *to_delete , *to_roll = _listBegin->right;
-		while (to_roll != _listBegin) {
-			to_delete = to_roll;
-			to_roll = to_roll->right;
-			delete (to_delete);
-		}
-		_listBegin->right = _listBegin;
-		_listBegin->left = _listBegin;
-		_size = 0;
-	}
-
-
-	void printList() const {
-		s_tree<value_type>	*begin = _listBegin;
-		while (begin->right != _listBegin) {
-			#ifdef _DEBUG_
-			#endif
-			std::cout << "ptr : " << begin->right << " : " << begin->right->myPair.first 
-			<< "::" << begin->right->myPair.second << std::endl;
-			begin = begin->right;
-		}
-	}
   
 	private:
 
@@ -439,6 +413,31 @@ template <class InputIterator>
 		return NULL;
 	}
 
+	void delist() {
+		#ifdef _DEBUG_
+			std::cout << "listBegin : " << _listBegin << std::endl;
+		#endif
+		s_tree<value_type> *to_delete , *to_roll = _listBegin->right;
+		while (to_roll != _listBegin) {
+			to_delete = to_roll;
+			to_roll = to_roll->right;
+			delete (to_delete);
+		}
+		_listBegin->right = _listBegin;
+		_listBegin->left = _listBegin;
+		_size = 0;
+	}
+
+	void printList() const {
+		s_tree<value_type>	*begin = _listBegin;
+		while (begin->right != _listBegin) {
+			#ifdef _DEBUG_
+			#endif
+			std::cout << "ptr : " << begin->right << " : " << begin->right->myPair.first 
+			<< "::" << begin->right->myPair.second << std::endl;
+			begin = begin->right;
+		}
+	}
 //https://stackoverflow.com/questions/40035282/c-typedef-typename-classnametemplate/40035372
 // TYPE DEFINI SPECIFIQUEMENT POUR L'ALLOCATION DE NOEUDS 
     typename allocator_type::template rebind<s_tree<value_type> >::other _alloc_node;
@@ -481,7 +480,6 @@ template <class InputIterator>
 	template<typename Key, typename T>
 	std::ostream& operator <<(std::ostream &o, ft::map<Key, T> &x) { o << x.getStr() << std::endl; return o;}
 
-//DEBUT AJOUT SOLAL
   template <class Key, class T>
   bool operator== (const map<Key, T>& lhs, const map<Key, T>& rhs) {
 	#ifdef _DEBUG_
@@ -489,16 +487,16 @@ template <class InputIterator>
 	#endif
     if (lhs.size() != rhs.size())
       return false;
-    typename map<Key, T>::iterator it1 = lhs.begin();
-    typename map<Key, T>::iterator it2 = rhs.begin();
+    typename map<Key, T>::const_iterator it1 = lhs.begin(), lhs_end = lhs.end();
+    typename map<Key, T>::const_iterator it2 = rhs.begin(), rhs_end = rhs.end();
 
-    while (it1 != lhs.end() && it2 != rhs.end()) {
+    while (it1 != lhs_end && it2 != rhs_end) {
       if (*it1 != *it2)
         return false;
       it1++;
       it2++;
     }
-    return (it1 == lhs.end()) && (it2 == rhs.end());
+    return (it1 == lhs_end) && (it2 == rhs_end);
   };
 
   template <class Key, class T>
@@ -506,10 +504,10 @@ template <class InputIterator>
 
   template <class Key, class T>
   bool operator<  (const map<Key, T>& lhs, const map<Key, T>& rhs) {
-    typename map<Key, T>::iterator it1 = lhs.begin();
-    typename map<Key, T>::iterator it2 = rhs.begin();
+    typename map<Key, T>::const_iterator it1 = lhs.begin(), lhs_end = lhs.end();
+    typename map<Key, T>::const_iterator it2 = rhs.begin(), rhs_end = rhs.end();
 
-    while (it1 != lhs.end() && it2 != rhs.end()) {
+    while (it1 != lhs_end && it2 != rhs_end) {
       if (*it1 < *it2)
         return true;
       if (*it2 < *it1)
@@ -517,7 +515,7 @@ template <class InputIterator>
       it1++;
       it2++;
     }
-    return (it1 == lhs.end()) && (it2 != rhs.end());
+    return (it1 == lhs_end) && (it2 != rhs_end);
   };
 
   template <class Key, class T>
@@ -528,8 +526,6 @@ template <class InputIterator>
 
   template <class Key, class T>
   bool operator>= (const map<Key, T>& lhs, const map<Key, T>& rhs) { return !(lhs < rhs); };
-  //FIN AJOUT SOLAL
-
 
 }
 

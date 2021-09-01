@@ -11,13 +11,13 @@ public:
 	~ClassTest( void );
 
 	ClassTest&   operator=( ClassTest const & rhs );
-	bool   operator==( ClassTest const & rhs );
+	// bool  friend operator==(const ClassTest lhs , const ClassTest rhs );
 	bool   operator<( ClassTest const & rhs );
 
 	int getNb( void ) const;
 	int getPtrNb( void ) const;
 
-private:
+// private:
 
 	int _nb;
 	int *_ptr;
@@ -29,26 +29,34 @@ std::ostream &    operator<<( std::ostream & o, ClassTest const & i );
 
 ClassTest::ClassTest( void ) : _nb( 0 ), _ptr(new int(0))
 {
-	std::cout << "ClassTest Default Constructor called" << std::endl;
+	#ifdef _DEBUG_
+		std::cout << "ClassTest Default Constructor called" << std::endl;
+	#endif
 	return ;
 }
 
 ClassTest::ClassTest( int const n ) : _nb( n ), _ptr(new int(n))
 {
-	std::cout << "ClassTest Parametric Constructor called" << std::endl;
+	#ifdef _DEBUG_
+		std::cout << "ClassTest Parametric Constructor called" << std::endl;
+	#endif
 	return ;
 }
 
 ClassTest::ClassTest( ClassTest const & src )
 {
-	std::cout << "ClassTest Copy Constructor called" << std::endl;
+	#ifdef _DEBUG_
+		std::cout << "ClassTest Copy Constructor called" << std::endl;
+	#endif
 	*this = src ;
 	return ;
 }
 
 ClassTest::~ClassTest()
 {
-	std::cout << "ClassTest Destructor called" << std::endl;
+	#ifdef _DEBUG_
+		std::cout << "ClassTest Destructor called" << std::endl;
+	#endif
 	delete _ptr;
 	_ptr = NULL;
 	return ;
@@ -66,7 +74,9 @@ int ClassTest::getPtrNb( void ) const
 
 ClassTest & ClassTest::operator=( ClassTest const & rhs )
 {
-	std::cout << "ClassTest Assignment operator called" << std::endl;
+	#ifdef _DEBUG_
+		std::cout << "ClassTest Assignment operator called" << std::endl;
+	#endif
 	if (this != &rhs ) {
 		// std::cout << "rhs : " << rhs << "\n";
 		_nb = rhs._nb;
@@ -78,25 +88,35 @@ ClassTest & ClassTest::operator=( ClassTest const & rhs )
 	return *this;
 }
 
-bool ClassTest::operator==( ClassTest const & rhs )
+bool operator==(const ClassTest lhs, ClassTest const & rhs )
 {
-	std::cout << "ClassTest equivalent operator called" << std::endl;
-	if (this != &rhs && _nb == rhs._nb && *_ptr == *rhs._ptr)
+	#ifdef _DEBUG_
+		std::cout << "ClassTest equivalent operator called" << std::endl;
+	#endif
+ 	if (&lhs != &rhs && lhs._nb == rhs._nb && *lhs._ptr == *rhs._ptr)
 		return true;
-	return false;
+	return false; 	
+/* 	if (this != &rhs && _nb == rhs._nb && *_ptr == *rhs._ptr)
+		return true;
+	return false; */
 }
 
-bool ClassTest::operator<( ClassTest const & rhs )
+bool operator<( ClassTest const & lhs, ClassTest const & rhs )
 {
-	std::cout << "ClassTest Assignment operator called" << std::endl;
-	if (this != &rhs && _nb < rhs._nb && *_ptr < *rhs._ptr) 
+	#ifdef _DEBUG_
+		std::cout << "ClassTest Assignment operator called" << std::endl;
+	#endif
+	if (&lhs != &rhs && lhs._nb < rhs._nb && *lhs._ptr < *rhs._ptr) 
 		return true;
 	return false;
+/* 	if (this != &rhs && _nb < rhs._nb && *_ptr < *rhs._ptr) 
+		return true;
+	return false; */
 }
 
 std::ostream & operator<<( std::ostream & o, ClassTest const & i )
 {
-	o << "_nb is : " << i.getNb()/*  << ", _ptr(value) is : " << i.getPtrNb() */;
+	o << "_nb_of_ClassTest is : " << i.getNb()/*  << ", _ptr(value) is : " << i.getPtrNb() */;
 	return o;
 }
 #endif

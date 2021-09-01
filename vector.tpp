@@ -19,15 +19,15 @@ namespace ft {
 
 	public:
 
-		typedef _Alloc								  allocator_type;		//	Type d'allocateur par default celui de la STD
-		typedef _T									  value_type;			//
-		typedef	_T*									  pointer;				//	Pointer to element
-		typedef	_T&									  reference;			//	Reference to element
-		typedef	const _T*							  const_pointer;		//	Pointer to constant element
-		typedef	const _T&							  const_reference;		//	Reference to constant element
-		typedef size_t								  size_type;			//	Quantities of elements
-		typedef	ptrdiff_t							  difference_type;		//	Difference between two pointers
-		// typedef typename std::pointer				  pointer;
+		typedef _Alloc									allocator_type;		//	Type d'allocateur par default celui de la STD
+		typedef _T										value_type;			//
+		typedef	_T*										pointer;				//	Pointer to element
+		typedef	_T&										reference;			//	Reference to element
+		typedef	const _T*								const_pointer;		//	Pointer to constant element
+		typedef	const _T&								const_reference;		//	Reference to constant element
+		typedef size_t									size_type;			//	Quantities of elements
+		typedef	ptrdiff_t								difference_type;		//	Difference between two pointers
+		// typedef typename std::pointer					pointer;
 		// typedef typename std::const_pointer 		  const_pointer;
 		// typedef std::reverse_iterator<iterator>		  reverse_iterator;
 		// typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
