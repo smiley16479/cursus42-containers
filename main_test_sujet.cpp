@@ -3,7 +3,7 @@
 #include <deque>
 #include <time.h>
 
-#if 1 //CREATE A REAL STL EXAMPLE
+#if 0 //CREATE A REAL STL EXAMPLE
 	#include <map>
 	#include <stack>
 	#include <vector>
@@ -22,7 +22,7 @@
 
 #include <stdlib.h>
 
-#define MAX_RAM /* 536870912 // */ 4294967296
+#define MAX_RAM  /* 536870912 // */ 4294967296
 #define BUFFER_SIZE 4096
 struct Buffer
 {
@@ -107,6 +107,7 @@ std::cout << "1\n";
 	end = time( NULL );
 	unsigned long secondes_vector = (unsigned long) difftime( end, begin );
 	std::cout << "after_vector : " << secondes_vector/60 << ":" << secondes_vector%60 << "min" << std::endl;
+/*
 	begin = time( NULL );
 	int array[COUNT];
 	for (int i = 0; i < COUNT; ++i)
@@ -148,6 +149,6 @@ std::cout << "1\n";
 	end = time( NULL );
 	unsigned long secondes_stack = (unsigned long) difftime( end, begin );
 	std::cout << "after_stack : " << secondes_stack/60 << ":" << secondes_stack%60 << "min" << std::endl;
-
+*/
 	return (0);
 }

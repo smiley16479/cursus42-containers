@@ -15,7 +15,8 @@ MAP CONÇU AVEC UNE LISTE CHAINÉE PLUTOT QU'UN ARBRE BINAIRE
 #ifdef _DEBUG_
 #endif
 
-#include "map_util copy.hpp"
+// #include "map_util copy.hpp"
+#include "map_util_copy2.hpp"
 
 
 // TRAIT 
@@ -55,7 +56,7 @@ namespace ft {
 	// typedef	const value_type*						const_pointer; //	allocator_type::const_pointer for the default allocator: const value_type*
 
 	typedef ft::map_iterator< Key, T >				iterator;  // a bidirectional iterator to value_type convertible to const_iterator
-	typedef ft::const_map_iterator< const Key, const T >	const_iterator; //	a bidirectional iterator to const value_type	
+	typedef ft::map_iterator< Key, T, true >	const_iterator; //	a bidirectional iterator to const value_type	
 	
 	typedef ft::reverse_iterator<iterator>			reverse_iterator;
 	// typedef iterator	 						reverse_iterator; //	reverse_iterator<iterator>	
@@ -70,9 +71,9 @@ namespace ft {
 		iterator end()   { return iterator(_listBegin); }
 		const_iterator begin() const { return const_iterator(_listBegin->right);}
 		const_iterator end() const { return const_iterator(_listBegin);}
-		reverse_iterator rbegin() { return reverse_iterator(--(this->end()));}
+		reverse_iterator rbegin() { return reverse_iterator((this->end()));}
 		reverse_iterator rend() { return reverse_iterator(this->begin());}
-		const_reverse_iterator rbegin() const { return const_reverse_iterator(--(this->end()));}
+		const_reverse_iterator rbegin() const { return const_reverse_iterator((this->end()));}
 		const_reverse_iterator rend() const { return const_reverse_iterator(this->begin());}
 
 //Implemented method and // //NON implemented method

@@ -374,15 +374,6 @@ void map_iterator()
 	std::cout << YELLOW "Map const_iterator ✅" RESET << std::endl;
 
 	{ft::map<int, int>::reverse_iterator it = map1.rbegin(), end = map1.rend();
-	for (; it != end; ++it)
-#ifdef binary_out
-	myfile << it->second << std::endl;
-#else
-	std::cout << it->second << std::endl;
-#endif
-}
-	std::cout << YELLOW "Map reverse_iterator ✅" RESET << std::endl;
-/* 	{ft::map<int, int>::const_reverse_iterator it = map1.rbegin(), end = map1.rend();
 	for (; it != end; it++)
 #ifdef binary_out
 	myfile << it->second << std::endl;
@@ -390,7 +381,17 @@ void map_iterator()
 	std::cout << it->second << std::endl;
 #endif
 }
-	std::cout << YELLOW "Map const_revese_iterator ✅" RESET << std::endl; */
+	std::cout << YELLOW "Map reverse_iterator ✅" RESET << std::endl;
+
+	{ft::map<int, int>::const_reverse_iterator it = map1.rbegin(), end = map1.rend();
+	for (; it != end; it++)
+#ifdef binary_out
+	myfile << it->second << std::endl;
+#else
+	std::cout << it->second << std::endl;
+#endif
+}
+	std::cout << YELLOW "Map const_revese_iterator ✅" RESET << std::endl;
 	return ;
 }
 
@@ -413,11 +414,11 @@ int map_test()
 			myfile.open("mapTest_perso.txt");
 	#endif
 #endif
-	// map_constructor();
-	// map_capacity();
-	// map_acces();
-	// map_modifiers();
-	// map_operations();
+	map_constructor();
+	map_capacity();
+	map_acces();
+	map_modifiers();
+	map_operations();
 	map_iterator();
 
 	// offcial_map_test();
