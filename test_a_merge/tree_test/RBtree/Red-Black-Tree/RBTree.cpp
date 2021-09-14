@@ -18,9 +18,39 @@ Node::Node(int data) {
     left = right = parent = NULL;
 }
 
-RBTree::RBTree() {
-    root = NULL;
+RBTree::RBTree() : siz(0){
+    root = new Node(0);
+    root->parent = NULL;
+    root->right = NULL;
+    root->left = NULL;
+    root->color = E_BLACK;
 }
+
+void RBTree::bind_first_node(Node *ptr)
+{
+    root->parent = ptr;
+    root->right = ptr;
+    root->left = ptr;
+    root->color = E_BLACK;
+
+    ptr->parent = NULL;
+    ptr->right = root;
+    ptr->left = root;
+}
+
+void RBTree::set_left_right(void) {
+    root->left = minValueNode(root->parent);
+    root->left->left = root; 
+    root->right = maxValueNode(root->parent);
+    root->right->right = root; 
+
+}
+
+
+RBTree::RBTree(Node *ptr) : siz(1){
+    root = new Node(0);
+    bind_first_node(ptr);
+};
 
 int RBTree::getColor(Node *&node) {
     if (node == NULL)
@@ -30,14 +60,15 @@ int RBTree::getColor(Node *&node) {
 
 void RBTree::deleteTree(Node *ptr)
 {
-    if (ptr){
+    if (ptr && ptr != root){
     deleteTree(ptr->left);
     deleteTree(ptr->right);
     delete ptr;}
 }
 
 RBTree::~RBTree() {
-    deleteTree(root);
+    deleteTree(root->parent);
+    delete root;
 }
 
 
@@ -48,27 +79,29 @@ void RBTree::setColor(Node *&node, int color) {
     node->color = color;
 }
 
-Node* RBTree::insertBST(Node *&root, Node *&ptr) {
-    if (root == NULL)
+Node* RBTree::insertBST(Node *&node, Node *&ptr) {
+    if (node == NULL || node == this->root)
         return ptr;
 
-    if (ptr->data < root->data) {
-        root->left = insertBST(root->left, ptr);
-        root->left->parent = root;
-    } else if (ptr->data > root->data) {
-        root->right = insertBST(root->right, ptr);
-        root->right->parent = root;
+    if (ptr->data < node->data) {
+        node->left = insertBST(node->left, ptr);
+        node->left->parent = node;
+    } else if (ptr->data > node->data) {
+        node->right = insertBST(node->right, ptr);
+        node->right->parent = node;
     }
-    return root;
+    return node;
 }
 
 void RBTree::insertValue(int n) {
     Node *node = new Node(n);
-    std::cout << "root : " << root << " vs getRoot() : " << getRoot(node) << " node inséré : " << node << std::endl;
-    root = insertBST(root, node);
-    std::cout << "root : " << root << " vs getRoot() : " << getRoot(node) << " node inséré : " << node << std::endl;
+    if (!siz && ++siz)
+        bind_first_node(node);
+    // std::cout << "root : " << root << " vs getRoot() : " << getRoot(node) << " node inséré : " << node << " data : " << node->data << " prt : " << node->parent << " root_prt : " << root->parent << std::endl;
+    /* root = */ insertBST(root->parent, node);
+    // std::cout << "root : " << root << " vs getRoot() : " << getRoot(node) << " node inséré : " << node << " data : " << node->data << " prt : " << node->parent << " root_prt : " << root->parent << std::endl;
     fixInsertRBTree(node);
-    print2dTree(getRoot(node));
+    // print2dTree(getRoot(node));
 }
 
 /* void RBTree::rotateLeft(Node *&ptr) {
@@ -119,7 +152,7 @@ void RBTree::rotateLeft(Node *&n/* , Node *&root */)
 	}
 	n->right->parent = n->parent;
     if (n->parent == NULL)  // <- ici était le souci
-        root = n->right;    // <- ici était le souci
+        root->parent = n->right;    // <- ici était le souci
 	else if (n->parent->right == n)
 		n->parent->right = n->right;
 	else
@@ -141,7 +174,7 @@ void RBTree::rotateRight(Node *&n/* , Node *&root */)
 	}
 	n->left->parent = n->parent;
     if (n->parent == NULL)      // <- ici était le souci
-        root = n->left;         // <- ici était le souci
+        root->parent = n->left;         // <- ici était le souci
 	else if (n->parent->right == n)
 		n->parent->right = n->left;
 	else
@@ -199,6 +232,7 @@ void RBTree::fixInsertRBTree(Node *&ptr) {
         }
     }
     Node *_ptr = getRoot(ptr);
+    set_left_right();
     setColor(_ptr/* root */, E_BLACK);
 }
 
@@ -206,8 +240,8 @@ void RBTree::fixDeleteRBTree(Node *&node) {
     if (node == NULL)
         return;
 
-    if (node == root) {
-        root = NULL;
+    if (node == root->parent) { std::cout << "pas bon\n";
+        root->parent = NULL;
         return;
     }
 
@@ -232,7 +266,7 @@ void RBTree::fixDeleteRBTree(Node *&node) {
         Node *parent = NULL;
         Node *ptr = node;
         setColor(ptr, E_DOUBLE_BLACK);
-        while (ptr != root && getColor(ptr) == E_DOUBLE_BLACK) {
+        while (ptr != root->parent && getColor(ptr) == E_DOUBLE_BLACK) {
             parent = ptr->parent;
             if (ptr == parent->left) {
                 sibling = parent->right;
@@ -297,30 +331,37 @@ void RBTree::fixDeleteRBTree(Node *&node) {
         else
             node->parent->right = NULL;
         delete(node);
-        setColor(root, E_BLACK);
+        setColor(root->parent, E_BLACK);
     }
 }
 
-Node* RBTree::deleteBST(Node *&root, int data) {
-    if (root == NULL)
-        return root;
+Node* RBTree::deleteBST(Node *&node, int data) {
+    if (node == NULL || node == RBTree::root)
+        return node;
 
-    if (data < root->data)
-        return deleteBST(root->left, data);
+    if (data < node->data)
+        return deleteBST(node->left, data);
 
-    if (data > root->data)
-        return deleteBST(root->right, data);
+    if (data > node->data)
+        return deleteBST(node->right, data);
 
-    if (root->left == NULL || root->right == NULL)
-        return root;
+    if (node->left == NULL || node->right == NULL ||
+        node->left == RBTree::root || node->right == RBTree::root)
+        return node;
 
-    Node *temp = minValueNode(root->right);
-    root->data = temp->data;
-    return deleteBST(root->right, temp->data);
+    Node *temp = minValueNode(node->right);
+    #ifdef debug
+        std::cout << "temp :" << temp << ":" << temp->data << "\n"; 
+    #endif
+    node->data = temp->data;
+    return deleteBST(node->right, temp->data);
 }
 
 void RBTree::deleteValue(int data) {
-    Node *node = deleteBST(root, data);
+    Node *node = deleteBST(RBTree::root->parent, data);
+    #ifdef debug
+        std::cout << "node :" << node << ":" << node->data << "\n"; 
+    #endif
     fixDeleteRBTree(node);
 }
 
@@ -356,7 +397,7 @@ Node *RBTree::minValueNode(Node *&node) {
     Node *ptr = node;
 
     if (ptr)
-        while (ptr->left != NULL)
+        while (ptr->left != NULL && ptr->left != root)
             ptr = ptr->left;
 
     return ptr;
@@ -365,7 +406,7 @@ Node *RBTree::minValueNode(Node *&node) {
 Node* RBTree::maxValueNode(Node *&node) {
     Node *ptr = node;
 
-    while (ptr->right != NULL)
+    while (ptr->right != NULL && ptr->right != root)
         ptr = ptr->right;
 
     return ptr;
@@ -382,7 +423,7 @@ int RBTree::getBlackHeight(Node *node) {
 }
 
 void RBTree::print2dTree(Node *n, int space) {
-	if (n == NULL)
+	if (n == NULL || n == this->root)
 		return ;
 	space += 5;
 	print2dTree(n->right, space);
@@ -394,7 +435,8 @@ void RBTree::print2dTree(Node *n, int space) {
 }
 
 void RBTree::setRBtreeEnds(void) {
-
+    maxValueNode(root->parent);
+    minValueNode(root->parent);
 }
 
 // Test case 1 : 5 2 9 1 6 8 0 20 30 35 40 50 0

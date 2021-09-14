@@ -37,7 +37,7 @@ then
     echo "$1 compilé sous a.out 🔥 nous lançons l'éxécutable : "
     ./a.out
 else
-    echo le compilation a échouée 🐵
+    echo la compilation a échouée 🐵
 fi
 # Résumé de la syntaxe du SYNOPSIS
     # gras : tapez le mot exactement comme indiqué ;
