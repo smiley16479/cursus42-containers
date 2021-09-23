@@ -20,9 +20,9 @@ Node::Node(int data) {
 
 RBTree::RBTree() : siz(0){
     root = new Node(0);
-    root->parent = NULL;
-    root->right = NULL;
-    root->left = NULL;
+    root->parent = root;
+    root->right = root;
+    root->left = root;
     root->color = E_BLACK;
 }
 
@@ -39,11 +39,21 @@ void RBTree::bind_first_node(Node *ptr)
 }
 
 void RBTree::set_left_right(void) {
-    root->left = minValueNode(root->parent);
+    Node *tmp = minValueNode(root->parent);
+    root->left = (tmp == NULL || tmp == root) ? root : tmp;
+    std::cout << "return of  minValueNode(root->parent) : " << root->left << "\n";
     root->left->left = root; 
-    root->right = maxValueNode(root->parent);
+    tmp = maxValueNode(root->parent);
+    root->right = (tmp == NULL || tmp == root) ? root : tmp;
     root->right->right = root; 
 
+}
+
+void RBTree::remove_left_right(){
+    root->left->left = NULL;
+    root->left = NULL;
+    root->right->right = NULL;
+    root->right = NULL;
 }
 
 
@@ -71,11 +81,9 @@ RBTree::~RBTree() {
     delete root;
 }
 
-
 void RBTree::setColor(Node *&node, int color) {
     if (node == NULL)
         return;
-
     node->color = color;
 }
 
@@ -336,7 +344,7 @@ void RBTree::fixDeleteRBTree(Node *&node) {
 }
 
 Node* RBTree::deleteBST(Node *&node, int data) {
-    if (node == NULL || node == RBTree::root)
+    if (node == NULL)
         return node;
 
     if (data < node->data)
@@ -345,8 +353,7 @@ Node* RBTree::deleteBST(Node *&node, int data) {
     if (data > node->data)
         return deleteBST(node->right, data);
 
-    if (node->left == NULL || node->right == NULL ||
-        node->left == RBTree::root || node->right == RBTree::root)
+    if (node->left == NULL || node->right == NULL)
         return node;
 
     Node *temp = minValueNode(node->right);
@@ -358,12 +365,40 @@ Node* RBTree::deleteBST(Node *&node, int data) {
 }
 
 void RBTree::deleteValue(int data) {
+    remove_left_right();
     Node *node = deleteBST(RBTree::root->parent, data);
     #ifdef debug
         std::cout << "node :" << node << ":" << node->data << "\n"; 
     #endif
     fixDeleteRBTree(node);
+    set_left_right();
 }
+
+void RBTree::deleteValue( my_iterator it) {
+    remove_left_right();
+    Node *node = deleteBST(RBTree::root->parent, it._root->data);
+    #ifdef debug
+        std::cout << "node :" << node << ":" << node->data << "\n"; 
+    #endif
+    fixDeleteRBTree(node);
+    set_left_right();
+}
+
+void RBTree::deleteValue( my_iterator it,  my_iterator last) {
+    // remove_left_right();
+    my_iterator tmp;
+    for (; it != last; ){std::cout << "boucle it : " << *it <<"\n"; 
+        tmp = it++;
+        Node *node = deleteBST(RBTree::root->parent, tmp._root->data);
+        #ifdef debug
+            std::cout << "node :" << node << ":" << node->data << "\t (deleteValue)\n"; 
+        #endif
+        fixDeleteRBTree(node);
+    }
+    set_left_right();
+}
+
+
 
 void RBTree::inorderBST(Node *&ptr) {
     if (ptr == NULL)
@@ -406,8 +441,9 @@ Node *RBTree::minValueNode(Node *&node) {
 Node* RBTree::maxValueNode(Node *&node) {
     Node *ptr = node;
 
-    while (ptr->right != NULL && ptr->right != root)
-        ptr = ptr->right;
+    if (ptr)
+        while (ptr->right != NULL && ptr->right != root)
+            ptr = ptr->right;
 
     return ptr;
 }
@@ -430,7 +466,7 @@ void RBTree::print2dTree(Node *n, int space) {
 	std::cout << std::endl;
 	for (int i = 5; i < space; ++i)
 		std::cout << " ";
-	n->color ? std::cout << n->data << std::endl : std::cout << RED << n->data << RESET << std::endl;
+	n->color ? std::cout << n->data << " : " << n << std::endl : std::cout << RED << n->data << " : " << n << RESET << std::endl;
 	print2dTree(n->left, space);
 }
 

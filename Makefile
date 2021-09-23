@@ -58,8 +58,8 @@ test :
 	@rm -rf $(OBJ_DIR)
 	$(COMPILER) $(CFLAG_AUTO) -D$(DEF_PERS) -D$(DEF_OFF) $(foreach file, $(HDR_DIR),-I$(file)) $(SRC) -o $(NAME)
 	@./$(NAME)
-	diff vectorTest_*
-	diff stackTest_*
+#	diff vectorTest_*
+#	diff stackTest_*
 	diff mapTest_*
 
 clean	:

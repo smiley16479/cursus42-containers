@@ -30,7 +30,8 @@ class my_iterator
     my_iterator(Node *ptr) : _root(ptr), _baseRoot(NULL) {
         _baseRoot = get_rootNode(ptr);
         #ifdef debug
-            // std::cout << "parametric it constructor\n"; 
+            std::cout << "parametric it constructor\n"; 
+            std::cout << "_baseRoot ptr/val : " <<  _baseRoot << "/" << _baseRoot->data  <<"\n"; 
         #endif
     }
     // bool friend operator!=();
@@ -58,7 +59,7 @@ class my_iterator
           _root = tmp;
       }
     #ifdef debug
-    //   std::cout << "ds op++ root-data " << _root->data << "root/_baseRoot ptr" <<   _root << "/" << _baseRoot << std::endl;
+        std::cout << "ds op++ root-data " << _root->data << ", root/baseRoot ptr : " <<   _root << "/" << _baseRoot << std::endl;
     #endif
 
       return *this;
@@ -77,7 +78,7 @@ class my_iterator
 		}
         return (*this); //c'est faux */
     }
-
+    my_iterator operator++(int) {my_iterator tmp(*this); ++(*this); return tmp;} 
 
     my_iterator& operator -- () {
 /*       if ((_root->right && _root->right->parent != _root)
@@ -189,6 +190,7 @@ class RBTree
         int getBlackHeight(Node *);
         /* AJOUT */
         void set_left_right(void);
+        void remove_left_right(void);
         void setRBtreeEnds(void);
         void bind_first_node(Node *ptr);
     public:
@@ -202,8 +204,9 @@ class RBTree
         void inorder();
         void preorder();
         /* AJOUT */
-        void print2dTree(Node *n, int space = 0);
-
+        void deleteValue( my_iterator it );
+        void deleteValue( my_iterator it,  my_iterator last );
+        void print2dTree( Node *n, int space = 0 );
 
         /* :: */my_iterator begin() {return /* :: */my_iterator(minValueNode(this->root->left));}
         /* :: */my_iterator end() {return   /* :: */my_iterator(this->root);}

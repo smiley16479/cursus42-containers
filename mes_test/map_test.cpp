@@ -1,6 +1,6 @@
 // #define test
 
-#include "ClassTest.hpp"
+// #include "ClassTest.hpp"
 #include "colors.h"
 #include <map>
 #include <iostream>
@@ -8,8 +8,8 @@
 #include <time.h>
 #include <stdlib.h>
 #include <fstream>
-#include "map copy.hpp" // friend_directory/solalDunckel/includes/
-// #include "map.hpp" // friend_directory/solalDunckel/includes/
+// #include "map copy.hpp"
+#include "map.hpp" // friend_directory/solalDunckel/includes/
 // #include "./test/friend_directory/solalDunckel/includes/vector.hpp"
 // #include "./test/friend_directory/solalDunckel/includes/vector_iterator.hpp"
 // #include "./test/friend_directory/ska42/Vector.hpp"
@@ -28,15 +28,16 @@ void insert(T1* lhs, T2* rhs, size_t insertedElem)
 	rhs->insert(of_pair);
 
  	for (size_t i = 0; i < insertedElem; i++)
-	 {
-		int item = rand() % lhs->size();
+	{
+		int item = rand() /* % lhs->size() */;
+		std::cout << "item : " << item << "\n";
 		pair.first = item;
 		pair.second = item;
 		of_pair.first = item;
 		of_pair.second = item;
 		rhs->insert(of_pair);
 		lhs->insert(pair);
-	 }
+	}
 	return ;	 
 }
 
@@ -45,7 +46,7 @@ template <typename T1, typename T2>
 int is_equal(T1 lhs, T2 rhs, std::string str)
 {
 	(void)rhs;(void)str;
-	int item = rand() % (lhs.size() ? lhs.size() : INT32_MAX);
+	int item = rand();
 #ifndef binary_out
 	if (lhs.size() != rhs.size()) {
 		std::cout << RED "[KO] size(1) - lhs : " << lhs.size() <<  ", rhs : " << rhs.size() << RESET << std::endl; return 0;}
@@ -94,6 +95,8 @@ void map_constructor()
 	std::map<int, int> off_map1;
 	insert(&map1, &off_map1, 100);
 	ft::map<int, int> map2(map1.begin(), map1.end());
+	for (ft::map<int, int>::iterator it = map2.begin(), it_end = map2.end(); it != it_end; ++it)
+		std::cout << it->first << std::endl;
 	std::map<int, int> off_map2(off_map1.begin(), off_map1.end());
 	ft::map<int, int> map3 = map2;
 	std::map<int, int> off_map3 = off_map2;
@@ -105,11 +108,11 @@ void map_constructor()
 	// std::cout << "T1->first : " << T1_b_it->first << ", T2->first : " << T2_b_it->first << std::endl;
 	// std::cout << "map1.lower_bound().first : " << map1.lower_bound(10)->first << ", T2.lower_bound().first : " << off_map1.lower_bound(10)->first << std::endl;
 
-	is_equal(map1, off_map1, "constructor empty (1)");
-	is_equal(map2, off_map2, "constructor range (2)");
-	is_equal(map3, off_map3, "constructor copy (3)");
+	bool good = is_equal(map1, off_map1, "constructor empty (1)") ||
+	is_equal(map2, off_map2, "constructor range (2)") ||
+	is_equal(map3, off_map3, "constructor copy (3)") ||
 	is_equal(map3, off_map3, "constructor copy (3) 'type ='");
-	std::cout << YELLOW "Map Declaration ✅" RESET << std::endl;
+	std::cout << (good ? YELLOW : RED) << "Map Declaration " <<  (good ? "✅" : "❌") << RESET << std::endl;
 }
 
 void map_capacity()
@@ -117,14 +120,14 @@ void map_capacity()
 	ft::map<int, int> map1;
 	std::map<int, int> off_map1;
 	insert(&map1, &off_map1, 100);
-	IS_EQUAL(map1.empty(), off_map1.empty(), "Capacyty empty()  TEST 1");
-	IS_EQUAL(map1.size(), off_map1.size(), "Capacyty size()   TEST 1");
+	IS_EQUAL(map1.empty(), off_map1.empty(), "Capacity empty()  TEST 1");
+	IS_EQUAL(map1.size(), off_map1.size(), "Capacity size()   TEST 1");
 	insert(&map1, &off_map1, 100);
-	IS_EQUAL(map1.empty(), off_map1.empty(), "Capacyty empty()  TEST 2");
-	IS_EQUAL(map1.size(), off_map1.size(), "Capacyty size()   TEST 2");
+	IS_EQUAL(map1.empty(), off_map1.empty(), "Capacity empty()  TEST 2");
+	IS_EQUAL(map1.size(), off_map1.size(), "Capacity size()   TEST 2");
 	insert(&map1, &off_map1, 100);
-	IS_EQUAL(map1.empty(), off_map1.empty(), "Capacyty empty()  TEST 3");
-	IS_EQUAL(map1.size(), off_map1.size(), "Capacyty size()   TEST 3");
+	IS_EQUAL(map1.empty(), off_map1.empty(), "Capacity empty()  TEST 3");
+	IS_EQUAL(map1.size(), off_map1.size(), "Capacity size()   TEST 3");
 	std::cout << YELLOW "Map Capacity ✅" RESET << std::endl;
 
 	return ;
@@ -163,7 +166,7 @@ void map_modifiers()
 	std::cout << YELLOW "___Map Insert : [OK]" RESET << std::endl;
 	ft::map<int, int> map1;
 	std::map<int, int> off_map1;
-	insert(&map1, &off_map1, 100);
+	insert(&map1, &off_map1, 3/* 100 */);
 
 	ft::pair<int , int> pair(100, 100);
 	std::pair<int , int> of_pair(100, 100);
@@ -174,7 +177,7 @@ void map_modifiers()
 	
 	ft::map<int, int> map3(map2.begin(), map2.end());
 	std::map<int, int> off_map3(off_map2.begin(), off_map2.end());
-
+std::cout << "ICI !! " << map2.size() << ":" << off_map2.size() << "/" << map1.begin()->first << std::endl;
 	is_equal(map1, off_map1, "insert (1)");
 	is_equal(map2, off_map2, "insert (2)");
 	is_equal(map3, off_map3, "insert (3)");
@@ -184,7 +187,7 @@ void map_modifiers()
 	is_equal(map1, off_map1, "void erase (1) (iterator position)");
 	map1.erase(map1.begin()->first); off_map1.erase(off_map1.begin()->first);
 	is_equal(map1, off_map1, "size_type erase (2) (const key_type& k)");
-	map1.erase(map1.begin(), map1.end()); off_map1.erase(off_map1.begin(), off_map1.end());
+	map1.erase(map1.begin(), map1.end()); off_map1.erase(off_map1.begin(), off_map1.end()); // <- problem
 	is_equal(map1, off_map1, "void erase (3) (iterator first, iterator last)");
 	std::cout << YELLOW "___Map Swap : [OK]" RESET << std::endl;
 	map1.swap(map2); off_map1.swap(off_map2);
@@ -348,7 +351,7 @@ void full_fill(T1 *map1, T2 *off_map1)
 	off_map1->insert(off_val).first;
 }
 
-void map_iterator()
+/* void map_iterator()
 {
 	ft::map<int, int> map1;
 	std::map<int, int> off_map1;
@@ -393,7 +396,7 @@ void map_iterator()
 }
 	std::cout << YELLOW "Map const_revese_iterator ✅" RESET << std::endl;
 	return ;
-}
+} */
 
 
 void offcial_map_test();
@@ -414,12 +417,12 @@ int map_test()
 			myfile.open("mapTest_perso.txt");
 	#endif
 #endif
-	map_constructor();
-	map_capacity();
-	map_acces();
+	// map_constructor();
+	// map_capacity();
+	// map_acces();
 	map_modifiers();
-	map_operations();
-	map_iterator();
+	// map_operations();
+	// map_iterator();
 
 	// offcial_map_test();
 #ifdef binary_out
@@ -491,14 +494,13 @@ void offcial_map_test()
 
 	off_map1.erase (it_to_erase1, it_to_erase2);
 
-
 	std::map<int, int> map2(off_map1);
 	std::cout << MAGENTA "LowerBound(35) :" << map2.lower_bound(35)->first << RESET << std::endl;
 	std::cout << MAGENTA "upperBound(35) :" << map2.upper_bound(35)->first << RESET << std::endl;
 
 	// std::map<char, int>::iterator it = off_map1.begin();
 	std::map<int , int>::iterator end = off_map1.end();
-	std::cout << end._M_node->_M_parent << std::endl;
+	std::cout << end._M_node->_M_parent << ":" << end->first << std::endl;
 	std::cout << end._M_node->_M_right << std::endl;
 	std::cout << end._M_node->_M_left << std::endl;
 	std::map<int , int>::iterator off_it = off_map1.begin();

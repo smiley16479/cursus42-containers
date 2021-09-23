@@ -2,6 +2,7 @@
 
 #include <bits/stdc++.h>
 #include "RBTree.h"
+#include <map>
 
 void insertTest();
 void deleteTest();
@@ -31,8 +32,40 @@ int main() {
 
     // rbTree1.merge(rbTree2);
     // rbTree1.preorder();
-    deleteTest();
+    
+		// insertTest();
+   deleteTest();
+/*    std::map<int, int> test;
+        std::pair<int, int> a;
+    for (size_t i = 0; i < 9; i++) {
+        a = std::make_pair<int, int> (i , i);
+        test.insert(a);
+    }
+    std::map<int, int>::iterator it = test.begin(), end = test.end();
+    for (; it != end; it++){
+        std::cout << it->first << std::endl;
+    }
+    std::cout << "on en est ou : " << it->first << std::endl;
+    ++it;
+    std::cout << "on en est ou : " << it->first << std::endl;
+    ++it;
+    std::cout << "on en est ou : " << it->first << std::endl;
 
+    std::cout << "avant erase --it" << it->first << std::endl;
+    test.erase(it);
+    std::cout << "après erase --it" << it->first << std::endl;
+    // std::cout << it->first << std::endl;
+     ++it;
+    --it;
+    std::cout << it->first << std::endl;
+    --it;
+    std::cout << it->first << std::endl;
+    --it;
+    std::cout << it->first << std::endl;
+    --it;
+    std::cout << it->first << std::endl;
+    --it;
+    std::cout << it->first << std::endl; */
 
     return 0;
 }
@@ -95,24 +128,39 @@ void deleteTest()
     rbTree2.insertValue(18);
     rbTree2.print2dTree(rbTree2.root->parent);
 
-    std::cout << rbTree2.root->left->data << std::endl;
-    std::cout << rbTree2.root->right->data << std::endl;
+    std::cout << "rbTree2.root->left/right (data) : " << rbTree2.root->left->data << "/" << rbTree2.root->right->data << std::endl;
+
 
     int i(0);
-    my_iterator it = rbTree2.begin();
-    for (;it != rbTree2.end() && ++i < 4; ++it)
+    my_iterator it = rbTree2.begin(), it_end = rbTree2.end();
+    //  for (;it != rbTree2.end() /* && ++i < 4 */; ++it){
+    //     std::cout << *it << std::endl;
+    //      std::cout << it._baseRoot->parent->data << " boucle""\n";
+    //      }
+    //     // rbTree2.deleteValue(it);
+        rbTree2.deleteValue(it, it_end);
+    // it = rbTree2.begin();
+
+
+    // std::cout << *it << std::endl;
+    // rbTree2.deleteValue(3); // 16, 18 problem
+    rbTree2.print2dTree(rbTree2.root->parent);
+    std::cout << "rbTree2.root->left/right (data) : " << rbTree2.root->left->data << "/" << rbTree2.root->right->data << std::endl;
+    // std::cout << *it << std::endl;
+
+//Fonctionne :
+/*     for (;it != rbTree2.end() && ++i < 3; ++it)
         std::cout << *it << std::endl;
     std::cout << *it << std::endl;
-    rbTree2.deleteValue(8);
+    rbTree2.deleteValue(3); // 8
     rbTree2.print2dTree(rbTree2.root->parent);
-    std::cout << *it << std::endl;
-
+    std::cout << *it << std::endl; */
     
-    std::cout << "2nd boucle\n";
+    std::cout << "\n2nd boucle\n";
 
     it = rbTree2.begin();
     for (;it != rbTree2.end()  /* && ++i < 4 */; ++it)
         std::cout << *it << std::endl;
-    std::cout << *it << std::endl;
+    // std::cout << *it << std::endl;
     
 }

@@ -9,7 +9,7 @@
 	#include <vector>
 	namespace ft = std;
 #else
-	#include "map copy.hpp"
+	#include "map.hpp"
 	#include "stack.hpp"
 	#include "vector.hpp"
 	#define _MES_TESTS_
@@ -22,7 +22,7 @@
 
 #include <stdlib.h>
 
-#define MAX_RAM  /* 536870912 // */ 4294967296
+#define MAX_RAM  536870912 //  /**/ 4294967296
 #define BUFFER_SIZE 4096
 struct Buffer
 {
@@ -107,7 +107,7 @@ std::cout << "1\n";
 	end = time( NULL );
 	unsigned long secondes_vector = (unsigned long) difftime( end, begin );
 	std::cout << "after_vector : " << secondes_vector/60 << ":" << secondes_vector%60 << "min" << std::endl;
-/*
+
 	begin = time( NULL );
 	int array[COUNT];
 	for (int i = 0; i < COUNT; ++i)
@@ -120,9 +120,9 @@ std::cout << "1\n";
 	// std::cout << std::endl;
 	// for (int i = 0; i < COUNT; ++i)
 	// 	std::cout << "int1 : " << array[i] << " / int2 : " <<  map_int[array[i]] << std::endl;
-
+	std::cout << "After for loop i < COUNT : insert " << std::endl;
 	int sum = 0;
-	for (int i = 0; i < 10000; i++)
+	for (int i = 0; i < 10000000; i++)
 	{
 		int access = rand();
 		// std::cout << " map_int[" << access << "] : " << map_int[access] << std::endl;
@@ -149,6 +149,6 @@ std::cout << "1\n";
 	end = time( NULL );
 	unsigned long secondes_stack = (unsigned long) difftime( end, begin );
 	std::cout << "after_stack : " << secondes_stack/60 << ":" << secondes_stack%60 << "min" << std::endl;
-*/
+
 	return (0);
 }

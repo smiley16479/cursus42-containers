@@ -3,32 +3,30 @@
 
 namespace ft {
 
-
 template <class T>
-
-  struct less {
+struct less {
     typedef bool  result_type;
     typedef T     first_argument_type;
     typedef T     second_argument_type;
 
     bool operator() (const T &lhs, const T &rhs) const { return lhs < rhs; };
-  };
+};
 
-  template <class Compare, class T>
-  class Comp {
-   public:
+template <class Compare, class T>
+class Comp {
+  public:
     Comp(Compare c) : comp_(c) {};
 
     bool operator()(const T& x, const T& y) const { return comp_(x.first, y.first); };
 
     Compare comp_;
-  };
+};
 
   // ALLOCATOR
 
-  template <class T>
-  class allocator {
-   public:
+template <class T>
+class allocator {
+  public:
     typedef T        value_type;
     typedef T*       pointer;
     typedef const T* const_pointer;
@@ -71,115 +69,64 @@ template <class T>
     }
     bool operator== (const allocator&) throw() { return true; }
     bool operator!= (const allocator &a) throw() { return !operator==(a); }
-  };
+};
 
-  // ENABLE_IF / IS_INTEGRAL
-
-  template<bool B, class T = void>
-  struct enable_if {};
-
-  template<class T>
-  struct enable_if<true, T> { typedef T type; };
-
-  template <typename T>
-  struct is_integral { static const bool value = false; };
-
-  template <>
-  struct is_integral<bool> { static const bool value = true; };
-
-  template <>
-  struct is_integral<char> { static const bool value = true; };
-
-  template <>
-  struct is_integral<short> { static const bool value = true; };
-
-  template <>
-  struct is_integral<int> { static const bool value = true; };
-
-  template <>
-  struct is_integral<long> { static const bool value = true; };
-
-  template <>
-  struct is_integral<long long> { static const bool value = true; };
-
-  template <>
-  struct is_integral<unsigned char> { static const bool value = true; };
-
-  template <>
-  struct is_integral<unsigned short> { static const bool value = true; };
-
-  template <>
-  struct is_integral<unsigned int> { static const bool value = true; };
-
-  template <>
-  struct is_integral<unsigned long> { static const bool value = true; };
-
-  template <>
-  struct is_integral<unsigned long long> { static const bool value = true; };
-
-
-	template <typename T1, typename T2>
-	struct pair
-	{
-		typedef T1	first_type;	// The first template parameter (T1)	Type of member first.
-		typedef T2	second_type; //	The second template parameter (T2)	Type of member second.
-
-		pair () : first(), second() {};
-		
-		template<class U, class V> 
-		pair (const pair<U,V>& pr) : first(pr.first), second(pr.second) {};
-
-		pair (const first_type& a, const second_type& b) : first(a), second(b) {};
-
-		pair<T1, T2>  &operator= (const pair<T1, T2> &pr) {
-			first = pr.first;
-			second = pr.second;
-			return *this;
-		};
-
-		first_type  first;
-		second_type second;
+template <typename T1, typename T2>
+struct pair
+{
+	typedef T1	first_type;	// The first template parameter (T1)	Type of member first.
+	typedef T2	second_type; //	The second template parameter (T2)	Type of member second.
+	pair () : first(), second() {};
+	
+	template<class U, class V> 
+	pair (const pair<U,V>& pr) : first(pr.first), second(pr.second) {};
+	pair (const first_type& a, const second_type& b) : first(a), second(b) {};
+	pair<T1, T2>  &operator= (const pair<T1, T2> &pr) {
+		first = pr.first;
+		second = pr.second;
+		return *this;
 	};
+	first_type  first;
+	second_type second;
+};
 
-	template <class T1, class T2>
-	  bool operator== (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
-	{ return lhs.first==rhs.first && lhs.second==rhs.second; }
+template <class T1, class T2>
+bool operator== (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs){
+	return lhs.first==rhs.first && lhs.second==rhs.second;}
+template <class T1, class T2>
+bool operator!= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs){
+	return !(lhs==rhs);}
+template <class T1, class T2>
+bool operator<  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs){
+	return lhs.first<rhs.first || (!(rhs.first<lhs.first) && lhs.second<rhs.second);}
+template <class T1, class T2>
+bool operator<= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs){
+	return !(rhs<lhs);}
+template <class T1, class T2>
+bool operator>  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs){
+	return rhs<lhs;}
+template <class T1, class T2>
+bool operator>= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs){
+	return !(lhs<rhs);}
 
-	template <class T1, class T2>
-	  bool operator!= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
-	{ return !(lhs==rhs); }
+template <class T1, class T2>
+ft::pair<T1, T2> make_pair(T1 t, T2 u) {
+  return ft::pair<T1, T2>(t, u);
+};
 
-	template <class T1, class T2>
-	  bool operator<  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
-	{ return lhs.first<rhs.first || (!(rhs.first<lhs.first) && lhs.second<rhs.second); }
+enum Color {E_RED, E_BLACK, E_DOUBLE_BLACK};
 
-	template <class T1, class T2>
-	  bool operator<= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
-	{ return !(rhs<lhs); }
-
-	template <class T1, class T2>
-	  bool operator>  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
-	{ return rhs<lhs; }
-
-	template <class T1, class T2>
-	  bool operator>= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
-	{ return !(lhs<rhs); }
-
-  template <class T1, class T2>
-  ft::pair<T1, T2> make_pair(T1 t, T2 u) {
-    return ft::pair<T1, T2>(t, u);
-  };
-
-	template<class U>
-	struct s_tree
-	{
-		// typename ft::map< Key, T, Compare, Alloc>:: ;
-		// ft::map<Key , T , Compare, Alloc>::
-		U myPair;
-		s_tree* parent;
-		s_tree* left;
-		s_tree* right;
-	};
+template<class U>
+struct s_tree
+{
+	// typename ft::map< Key, T, Compare, Alloc>:: ;
+	// ft::map<Key , T , Compare, Alloc>::
+	U myPair;
+	int	color;
+	s_tree* parent;
+	s_tree* left;
+	s_tree* right;
+};
 
 
 // ITERATOR
@@ -227,15 +174,25 @@ template<typename Key, typename T >
 		// typedef ft::s_tree<Key, T>*	map_iterator; //AJOUT
 		// typedef ft::s_tree<Key, T>*	pointer; //AJOUT
  
-		map_iterator() : _ptr(NULL), _previous_ptr(NULL) {std::cout << "iterator_map default constructor" << std::endl;}
-		map_iterator(node_pointer ptr) : _ptr(ptr) , _previous_ptr(NULL) {_endNode = getHighest(_ptr); std::cout << "iterator_map parametric constructor" << std::endl;}
+		map_iterator() : _ptr(NULL) {
+			#ifdef debug
+				std::cout << "iterator_map default constructor" << std::endl;
+			#endif
+		}
+		map_iterator(node_pointer ptr) : _ptr(ptr), _baseRoot(NULL) {
+			#ifdef debug
+				std::cout << "iterator_map parametric constructor" << std::endl;
+			#endif
+			_baseRoot = get_rootNode(ptr);
+		//  _endNode = getHighest(_ptr);
+		}
 		// iterator(iterator const & ptr) : _ptr(ptr._ptr) {}
  
 		node_pointer getPtr() const { return _ptr; }
 		reference operator*() const { return _ptr->myPair; }
 		pointer operator->() { return &(_ptr->myPair); }
 
-		iterator& operator++() {
+/* 		iterator& operator++() {
 			if (_ptr) {
 // POUR TOOGLE ENTRE LE DERNIER ELEMENT ET LE END 
 				if (_previous_ptr == _endNode) {//std::cout << RED << "POUR TOOGLE ENTRE LE DERNIER ELEMENT ET LE END" << RESET << std::endl;
@@ -301,17 +258,45 @@ template<typename Key, typename T >
 			}
 //std::cout << RED << "TEST5 : Return sans rien faire, _ptr->right : " << _ptr->right << RESET << std::endl;
 			return (*this);
-		}
-
+		} */
+    iterator& operator++() {
+	#ifdef debug
+      std::cout << "ds ++op _ptr:val" << _ptr << ":\n" << /* _ptr->myPair.first << */ ", _baseRoot : " << _baseRoot << std::endl;
+    #endif
+      if (_ptr->right == _baseRoot)
+	  	  _ptr = _baseRoot;
+      else if (_ptr->right) {
+        _ptr = _ptr->right;
+        while (_ptr->left)
+          _ptr = _ptr->left;
+      }
+      else {
+        node_pointer tmp = _ptr->parent;
+        while (tmp && _ptr == tmp->right) {
+          _ptr = tmp;
+          tmp = tmp->parent;
+		#ifdef debug
+	      std::cout << "ds ++op _ptr/val" << _ptr << "/" << _ptr->myPair.first;
+		  std::cout << " et tmp : " << tmp << "\n";
+		//   std::cout << " et tmp->right:val" << tmp->right << ":" << tmp->right->myPair.first << std::endl;
+	    #endif		
+        }
+        if (/* tmp &&  */_ptr->right != tmp){ //std::cout << " here\n";
+          _ptr = tmp;}
+      }
+      return *this;
+	}
 		// iterator& operator++() { ++_ptr; return *this; }
 		iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
 		iterator& operator--() { --_ptr; return *this; }
 		iterator operator--(int) { iterator tmp = *this; --(*this); return tmp; }
 		iterator& operator=(const iterator & i) {
-			if (this->_ptr != i._ptr) { std::cout << "it_operator=\n";
+			if (this->_ptr != i._ptr) {
+				#ifdef debug
+					std::cout << "it_operator=\n";
+				#endif
 				_ptr = i._ptr;
 				_endNode = i._endNode;
-				_previous_ptr = i._previous_ptr;
 			}
 			return *this;
 		} // <- Le = est foireux
@@ -351,12 +336,36 @@ template<typename Key, typename T >
 				node = node->right;
 			return node;
 		}
+
+		node_pointer get_rootNode(node_pointer &node) {
+			#ifdef debug
+				std::cout << MAGENTA "get_rootNode : " << node << " data : " << node->myPair.first << " prt : " << node->parent << RESET"\n";
+			#endif
+	    	node_pointer ptr, previous_ptr;
+			ptr = previous_ptr = node;
+	    	while (ptr->parent != NULL && ptr->parent != previous_ptr)
+	    	    ptr = ptr->parent;
+			#ifdef debug
+				std::cout << MAGENTA "get_rootNode : " << ptr << " data : " << ptr->myPair.first << " prt : " << ptr->parent << RESET"\n";
+			#endif
+	    	previous_ptr = ptr;
+	    	while (ptr->left != previous_ptr)
+	    	{   
+	    	    #ifdef debug
+	    	        std::cout << MAGENTA "ptr inséré : " << ptr << " data : " << ptr->myPair.first << " prt : " << ptr->parent << RESET"\n";
+	    	    #endif
+	    	    previous_ptr = ptr;
+	    	    ptr = ptr->left;
+	    	}
+	    	return ptr;
+		}
+
 	    // private:
 			node_pointer _ptr;
-			node_pointer _previous_ptr;
 			node_pointer _endNode;
+			node_pointer _baseRoot;
+			
 	}; 
- 
 
 /* 	iterator begin() { s_tree<Key, T> temp = _mapTree;
 		while (temp->left) temp = temp->left;

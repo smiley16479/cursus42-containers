@@ -12,8 +12,8 @@
 
 // If you include don't name it on the compilation cmd
 #include "./mes_test/vector_test.cpp"
-#include "./mes_test/map_test.cpp"
 #include "./mes_test/stack_test.cpp"
+#include "./mes_test/map_test.cpp"
 	
 void	vector_test();
 void	stack_test();
@@ -28,15 +28,14 @@ void time_counter(time_t begin, const char *str){
 
 int main(int ac, char const *av[])
 {
-	time_t begin = time( NULL );
 	if (ac == 1){
-		begin = time( NULL );
-		vector_test();
-		time_counter(begin, "vector test");
-		begin = time( NULL );
-		stack_test();
-		time_counter(begin, "stack test");
-		begin = time( NULL );
+		time_t begin = time( NULL );
+		// vector_test();
+		// time_counter(begin, "vector test");
+		// begin = time( NULL );
+		// stack_test();
+		// time_counter(begin, "stack test");
+		// begin = time( NULL );
 		map_test();
 		time_counter(begin, "map test");
 	}
