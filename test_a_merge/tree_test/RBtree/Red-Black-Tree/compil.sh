@@ -31,7 +31,7 @@ shift $((OPTIND-1))
 # echo "s = ${s}"
 # echo "d = ${d}"
 
-g++ ${f} ${s} ${d} main.cpp RBTree.cpp #$@ <- pour spécifier les sources
+g++ ${f} ${s} ${d} $@ # main.cpp RBTree.cpp \ #$@ <- pour spécifier les sources
 if [ $? = 0 ]
 then
     echo "$1 compilé sous a.out 🔥 nous lançons l'éxécutable : "
