@@ -1,6 +1,6 @@
 #ifndef MAP_UTIL_HPP
 #define MAP_UTIL_HPP
-
+#include "iterator_traits.hpp"
 namespace ft {
 
 template <class T>
@@ -130,11 +130,34 @@ struct s_tree
 
 
 // ITERATOR
-template<typename Key, typename T >
+/* template<typename Key, typename T >
 	struct map_iterator
-	{
+	{ */
 
-// DEBUT Redefinition des typedef presents ds map.hpp l.49
+
+  template <class Key, class T, bool isconst = false>
+  struct map_iterator {
+    // typedef map_iterator<Key, T, isconst>   self;
+    typedef map_iterator<Key, T, isconst>   iterator;
+
+    typedef std::ptrdiff_t                  difference_type;
+    typedef std::bidirectional_iterator_tag iterator_category;
+    typedef ft::pair<const Key, T>          value_type;
+    typedef typename choose_type<isconst,
+              const value_type&, value_type&>::type       reference;
+    typedef typename choose_type<isconst,
+              const value_type*, value_type*>::type       pointer;
+    
+	typedef typename choose_type<isconst,
+              const s_tree<value_type>*, s_tree<value_type>*>::type	   node_pointer;
+
+    typedef typename choose_type<isconst,
+              const s_tree<value_type>* const*, s_tree<value_type>**>::type   nodeDBptr;
+
+// ft::s_tree<ft::pair<const int, int> >* const*
+
+
+/* // DEBUT Redefinition des typedef presents ds map.hpp l.49
 
 	typedef Key									key_type;	// The first template parameter (Key)	
 	typedef T									mapped_type;	// The second template parameter (T)	
@@ -167,24 +190,18 @@ template<typename Key, typename T >
 
 	typedef	ptrdiff_t							difference_type; //	a signed integral type, identical to: iterator_traits<iterator>::difference_type	usually the same as ptrdiff_t
 	typedef	size_t								size_type; //	an unsigned integral type that can represent any non-negative value of difference_type	usually the same as size_t
-// FIN Redefinition des typedef presents ds map.hpp l.49
+// FIN Redefinition des typedef presents ds map.hpp l.49 */
 
-
-		typedef std::forward_iterator_tag	iterator_category;
-		// typedef ft::s_tree<Key, T>*	map_iterator; //AJOUT
-		// typedef ft::s_tree<Key, T>*	pointer; //AJOUT
  
-		map_iterator() : _ptr(NULL) {
+		map_iterator() : _ptr(NULL), _baseRoot(NULL) {
 			#ifdef debug
 				std::cout << "iterator_map default constructor" << std::endl;
 			#endif
 		}
-		map_iterator(node_pointer ptr) : _ptr(ptr), _baseRoot(NULL) {
+		map_iterator(node_pointer ptr, nodeDBptr baseRoot) : _ptr(ptr), _baseRoot(baseRoot) {
 			#ifdef debug
 				std::cout << "iterator_map parametric constructor" << std::endl;
 			#endif
-			_baseRoot = get_rootNode(ptr);
-		//  _endNode = getHighest(_ptr);
 		}
 		// iterator(iterator const & ptr) : _ptr(ptr._ptr) {}
  
@@ -260,35 +277,52 @@ template<typename Key, typename T >
 			return (*this);
 		} */
     iterator& operator++() {
-	#ifdef debug
-      std::cout << "ds ++op _ptr:val" << _ptr << ":\n" << /* _ptr->myPair.first << */ ", _baseRoot : " << _baseRoot << std::endl;
+        // std::cout << /* "ds op++ root-data " << _ptr->data <<  */", root/baseRoot ptr : " <<   _ptr << "/" << *_baseRoot << std::endl;
+		if (!_ptr) {
+			if (!(_ptr = *_baseRoot))
+                return *this;
+			while (_ptr && _ptr->left)
+				_ptr = _ptr->left;
+		}
+		if (_ptr && _ptr->right){
+			_ptr = _ptr->right;
+			while (_ptr->left)
+				_ptr = _ptr->left;
+		}
+		else {
+			node_pointer tmp;
+			do {
+				tmp = _ptr;
+				_ptr = _ptr->parent;
+			} while (_ptr && (tmp == _ptr->right));
+		}
+    #ifdef debug
+        std::cout << "ds op++ root-data " << _ptr->data << ", root/baseRoot ptr : " <<   _ptr << "/" << _baseRoot << std::endl;
     #endif
-      if (_ptr->right == _baseRoot)
-	  	  _ptr = _baseRoot;
-      else if (_ptr->right) {
-        _ptr = _ptr->right;
-        while (_ptr->left)
-          _ptr = _ptr->left;
-      }
-      else {
-        node_pointer tmp = _ptr->parent;
-        while (tmp && _ptr == tmp->right) {
-          _ptr = tmp;
-          tmp = tmp->parent;
-		#ifdef debug
-	      std::cout << "ds ++op _ptr/val" << _ptr << "/" << _ptr->myPair.first;
-		  std::cout << " et tmp : " << tmp << "\n";
-		//   std::cout << " et tmp->right:val" << tmp->right << ":" << tmp->right->myPair.first << std::endl;
-	    #endif		
-        }
-        if (/* tmp &&  */_ptr->right != tmp){ //std::cout << " here\n";
-          _ptr = tmp;}
-      }
-      return *this;
+    	return *this;
+    }
+	
+	iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+	iterator& operator--() { 
+		if (!_ptr) {
+			_ptr = *_baseRoot;
+			while (_ptr && _ptr->right)
+				_ptr = _ptr->right;
+		}
+		else if (_ptr->left) {
+			_ptr = _ptr->left;
+			while (_ptr && _ptr->right)
+				_ptr = _ptr->right;
+		}
+		else {
+			node_pointer tmp;
+			do {
+				tmp = _ptr;
+				_ptr = _ptr->parent;
+			} while (_ptr && tmp == _ptr->left);
+		}
+		return *this;
 	}
-		// iterator& operator++() { ++_ptr; return *this; }
-		iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
-		iterator& operator--() { --_ptr; return *this; }
 		iterator operator--(int) { iterator tmp = *this; --(*this); return tmp; }
 		iterator& operator=(const iterator & i) {
 			if (this->_ptr != i._ptr) {
@@ -296,90 +330,24 @@ template<typename Key, typename T >
 					std::cout << "it_operator=\n";
 				#endif
 				_ptr = i._ptr;
-				_endNode = i._endNode;
+				_baseRoot = i._baseRoot;
 			}
 			return *this;
 		} // <- Le = est foireux
-		// iterator& operator=( iterator & i ) {_ptr(i._ptr); return *this;}
 		iterator& operator+=( map_iterator & i ) {_ptr += (size_t)i._ptr; return *this;}
 		iterator operator+( iterator & i ) {iterator copie(_ptr); copie += i; return (copie);}
 		iterator& operator-=( map_iterator & i ) {_ptr -= (size_t)i._ptr; return *this;}
 		iterator operator-( iterator & i ) {iterator copie(_ptr); copie -= i; return (copie);}
-		friend bool operator== (const map_iterator& a, const map_iterator& b) { return a._ptr == b._ptr; };
-		friend bool operator!= (const map_iterator& a, const map_iterator& b) { return a._ptr != b._ptr; };
-
-// (ITERATORS:) defini ds map.hpp car _mapTree non accessible ds map_utils
-/* 		iterator begin() { s_tree<Key, T> temp = _mapTree;
-			while (temp->left) temp = temp->left;
-			return iterator(temp); }
-		const_iterator begin() const { return this->begin();}
-		iterator end()   { s_tree<Key, T> temp = _mapTree;
-			while (temp->right) temp = temp->right;
-			return iterator(temp); }
-		const_iterator end() const { return this->end();}
-		reverse_iterator rbegin() { return this->end();}
-		const_reverse_iterator rbegin() const { return this->end();}
-		reverse_iterator rend() { return this->begin();}
-		const_reverse_iterator rend() const { return this->begin();} */
-		node_pointer getLowest(node_pointer node) {
-			while (node->parent)
-				node = node->parent;
-			while (node->left)
-				node = node->left;
-			return node;
-		}
-
-		node_pointer getHighest(node_pointer node) {
-			while (node->parent)
-				node = node->parent;
-			while (node->right)
-				node = node->right;
-			return node;
-		}
-
-		node_pointer get_rootNode(node_pointer &node) {
-			#ifdef debug
-				std::cout << MAGENTA "get_rootNode : " << node << " data : " << node->myPair.first << " prt : " << node->parent << RESET"\n";
-			#endif
-	    	node_pointer ptr, previous_ptr;
-			ptr = previous_ptr = node;
-	    	while (ptr->parent != NULL && ptr->parent != previous_ptr)
-	    	    ptr = ptr->parent;
-			#ifdef debug
-				std::cout << MAGENTA "get_rootNode : " << ptr << " data : " << ptr->myPair.first << " prt : " << ptr->parent << RESET"\n";
-			#endif
-	    	previous_ptr = ptr;
-	    	while (ptr->left != previous_ptr)
-	    	{   
-	    	    #ifdef debug
-	    	        std::cout << MAGENTA "ptr inséré : " << ptr << " data : " << ptr->myPair.first << " prt : " << ptr->parent << RESET"\n";
-	    	    #endif
-	    	    previous_ptr = ptr;
-	    	    ptr = ptr->left;
-	    	}
-	    	return ptr;
-		}
+/* 		friend bool operator== (const map_iterator& a, const map_iterator& b) { return a._ptr == b._ptr; }; //ORIGINAL
+		friend bool operator!= (const map_iterator& a, const map_iterator& b) { return a._ptr != b._ptr; }; */
+		bool operator!=(iterator b) { if (this->_ptr != b._ptr && *this->_baseRoot) return true; return false;};
+		bool operator==(iterator b) { if (*this != b) return false; return true;};
 
 	    // private:
-			node_pointer _ptr;
-			node_pointer _endNode;
-			node_pointer _baseRoot;
+			node_pointer  _ptr;
+			nodeDBptr _baseRoot;
 			
 	}; 
-
-/* 	iterator begin() { s_tree<Key, T> temp = _mapTree;
-		while (temp->left) temp = temp->left;
-		return iterator(temp); }
-	const_iterator begin() const { return this->begin();}
-	iterator end()   { s_tree<Key, T> temp = _mapTree;
-		while (temp->right) temp = temp->right;
-		return iterator(temp); }
-	const_iterator end() const { return this->end();}
-	reverse_iterator rbegin() { return this->end();}
-	const_reverse_iterator rbegin() const { return this->end();}
-	reverse_iterator rend() { return this->begin();}
-	const_reverse_iterator rend() const { return this->begin();} */
-
 }
 
 #endif

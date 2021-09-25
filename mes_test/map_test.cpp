@@ -27,10 +27,10 @@ void insert(T1* lhs, T2* rhs, size_t insertedElem)
 	std::pair<int , int> of_pair(100, 100);
 	rhs->insert(of_pair);
 
- 	for (size_t i = 0; i < insertedElem; i++)
+ 	for (size_t i = 1; i < insertedElem; i++)
 	{
 		int item = rand() /* % lhs->size() */;
-		std::cout << "item : " << item << "\n";
+		// std::cout << "item : " << item << "\n";
 		pair.first = item;
 		pair.second = item;
 		of_pair.first = item;
@@ -43,16 +43,16 @@ void insert(T1* lhs, T2* rhs, size_t insertedElem)
 
 
 template <typename T1, typename T2>
-int is_equal(T1 lhs, T2 rhs, std::string str)
+int is_equal(T1& lhs, T2& rhs, std::string str)
 {
 	(void)rhs;(void)str;
 	int item = rand();
 #ifndef binary_out
 	if (lhs.size() != rhs.size()) {
 		std::cout << RED "[KO] size(1) - lhs : " << lhs.size() <<  ", rhs : " << rhs.size() << RESET << std::endl; return 0;}
-	if (lhs.lower_bound(item)->first != rhs.lower_bound(item)->first) {
+	if (lhs.lower_bound(item)._ptr && lhs.lower_bound(item)->first != rhs.lower_bound(item)->first) {
 		std::cout << RED "[KO] lower_bound() - lhs : " << lhs.lower_bound(item)->first <<  ", rhs : " << rhs.lower_bound(item)->first << RESET << std::endl; return 0;}
-	if (lhs.find(item)->second != rhs.find(item)->second) {
+	if (lhs.find(item)._ptr && (lhs.find(item)->second != rhs.find(item)->second)) {
 		std::cout << RED "[KO] find() - lhs : " << lhs.find(item)->second <<  ", rhs : " << rhs.find(item)->second  << RESET << std::endl; return 0;}
 	if (lhs.erase(item) != rhs.erase(item)) {
 		std::cout << RED "[KO] erase() - lhs : " << lhs.erase(item) <<  ", rhs : " << rhs.erase(item) << RESET << std::endl; return 0;}
@@ -95,8 +95,6 @@ void map_constructor()
 	std::map<int, int> off_map1;
 	insert(&map1, &off_map1, 100);
 	ft::map<int, int> map2(map1.begin(), map1.end());
-	for (ft::map<int, int>::iterator it = map2.begin(), it_end = map2.end(); it != it_end; ++it)
-		std::cout << it->first << std::endl;
 	std::map<int, int> off_map2(off_map1.begin(), off_map1.end());
 	ft::map<int, int> map3 = map2;
 	std::map<int, int> off_map3 = off_map2;
@@ -166,18 +164,18 @@ void map_modifiers()
 	std::cout << YELLOW "___Map Insert : [OK]" RESET << std::endl;
 	ft::map<int, int> map1;
 	std::map<int, int> off_map1;
-	insert(&map1, &off_map1, 3/* 100 */);
+	insert(&map1, &off_map1, 100/* 3 */);
 
 	ft::pair<int , int> pair(100, 100);
 	std::pair<int , int> of_pair(100, 100);
 	ft::map<int, int> map2;
-	map2.insert(map1.begin(), pair);
+	map2.insert(map2.begin(), pair);
 	std::map<int, int> off_map2;
-	off_map2.insert(off_map1.begin(), of_pair);
+	off_map2.insert(off_map2.begin(), of_pair);
 	
 	ft::map<int, int> map3(map2.begin(), map2.end());
 	std::map<int, int> off_map3(off_map2.begin(), off_map2.end());
-std::cout << "ICI !! " << map2.size() << ":" << off_map2.size() << "/" << map1.begin()->first << std::endl;
+// std::cout << "ICI !! " << map2.size() << ":" << off_map2.size() << "/" << map1.begin()->first << std::endl;
 	is_equal(map1, off_map1, "insert (1)");
 	is_equal(map2, off_map2, "insert (2)");
 	is_equal(map3, off_map3, "insert (3)");
@@ -196,6 +194,7 @@ std::cout << "ICI !! " << map2.size() << ":" << off_map2.size() << "/" << map1.b
 
 	map3.clear(); off_map3.clear();
 	std::cout << YELLOW "___Map Clear : [OK]" RESET << std::endl;
+	// std::cout << "map3.lower_bound(10)._ptr : " << map3.lower_bound(10)._ptr << "\n";
 	is_equal(map3, off_map3, "void Clear()");
 	std::cout << YELLOW "Map Modifiers ✅" RESET << std::endl;
 
@@ -420,8 +419,8 @@ int map_test()
 	// map_constructor();
 	// map_capacity();
 	// map_acces();
-	map_modifiers();
-	// map_operations();
+	// map_modifiers();
+	map_operations();
 	// map_iterator();
 
 	// offcial_map_test();
