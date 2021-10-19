@@ -119,8 +119,6 @@ enum Color {E_RED, E_BLACK, E_DOUBLE_BLACK};
 template<class U>
 struct s_tree
 {
-	// typename ft::map< Key, T, Compare, Alloc>:: ;
-	// ft::map<Key , T , Compare, Alloc>::
 	U myPair;
 	int	color;
 	s_tree* parent;
@@ -130,22 +128,18 @@ struct s_tree
 
 
 // ITERATOR
-/* template<typename Key, typename T >
-	struct map_iterator
-	{ */
-
-
   template <class Key, class T, bool isconst = false>
   struct map_iterator {
-    // typedef map_iterator<Key, T, isconst>   self;
-    typedef map_iterator<Key, T, isconst>   iterator;
 
+    typedef map_iterator<Key, T, isconst>   iterator;
     typedef std::ptrdiff_t                  difference_type;
     typedef std::bidirectional_iterator_tag iterator_category;
     typedef ft::pair<const Key, T>          value_type;
+
     typedef typename choose_type<isconst,
               const value_type&, value_type&>::type       reference;
-    typedef typename choose_type<isconst,
+    
+	typedef typename choose_type<isconst,
               const value_type*, value_type*>::type       pointer;
     
 	typedef typename choose_type<isconst,
@@ -193,89 +187,22 @@ struct s_tree
 // FIN Redefinition des typedef presents ds map.hpp l.49 */
 
  
-		map_iterator() : _ptr(NULL), _baseRoot(NULL) {
+		map_iterator() : _ptr(NULL), _baseRoot(NULL), _endPoint(value_type()) {
 			#ifdef debug
 				std::cout << "iterator_map default constructor" << std::endl;
 			#endif
 		}
-		map_iterator(node_pointer ptr, nodeDBptr baseRoot) : _ptr(ptr), _baseRoot(baseRoot) {
+		map_iterator(const node_pointer ptr, const nodeDBptr baseRoot) : _ptr(ptr), _baseRoot(baseRoot), _endPoint(value_type()) {
 			#ifdef debug
 				std::cout << "iterator_map parametric constructor" << std::endl;
 			#endif
 		}
-		// iterator(iterator const & ptr) : _ptr(ptr._ptr) {}
- 
-		node_pointer getPtr() const { return _ptr; }
-		reference operator*() const { return _ptr->myPair; }
-		pointer operator->() { return &(_ptr->myPair); }
+    	map_iterator(const map_iterator<Key, T, false> &copy) : _ptr(copy._ptr),  _baseRoot(copy._baseRoot), _endPoint(copy._endPoint) {};
+    	map_iterator(const map_iterator<Key, T, true> &copy) : _ptr(copy._ptr),  _baseRoot(copy._baseRoot), _endPoint(copy._endPoint) {}; 
+		// node_pointer getPtr() const { return _ptr; }
+		reference operator*() const { value_type pair_blanche = _endPoint ; return _ptr ? _ptr->myPair : pair_blanche; }
+		pointer operator->() {value_type pair_blanche = _endPoint ; return _ptr ? &(_ptr->myPair) : &pair_blanche; }
 
-/* 		iterator& operator++() {
-			if (_ptr) {
-// POUR TOOGLE ENTRE LE DERNIER ELEMENT ET LE END 
-				if (_previous_ptr == _endNode) {//std::cout << RED << "POUR TOOGLE ENTRE LE DERNIER ELEMENT ET LE END" << RESET << std::endl;
-					_previous_ptr = _endNode->parent;
-					_ptr = _endNode;
-					return (*this);
-				}
-// 	POUR ALLER TT A GAUCHE D'UNE BRANCHE DE DROITE OU POUR DESCENDRE D'UNE BRANCHE VERS LA DROITE
-				if (_ptr->right && _ptr->right != _previous_ptr && (_ptr = _ptr->right)) {
-//std::cout << RED << "TEST1::a_previous_ptr" << _previous_ptr->myPair.first << RESET << std::endl;
-					_previous_ptr = _ptr;
-					while (_ptr->left) {
-						_ptr = _ptr->left;
-						_previous_ptr = _ptr;
-					}
-//std::cout << RED << "TEST1::b_previous_ptr" << _previous_ptr->myPair.first << RESET << std::endl;
-					return (*this);
-				}
-// POUR REMONTER D'UNE BRANCHE
-				else if (!_ptr->left && !_ptr->right && _ptr->parent) {
-//std::cout << RED << "TEST2::a _previous_ptr" << _previous_ptr->myPair.first << "highest : " << this->getHighest(_ptr)->myPair.first << RESET << std::endl;
-					if (_previous_ptr == _endNode) {
-						this->_ptr = _previous_ptr->parent;
-						return (*this);
-					}
-					if (_ptr->parent && _ptr->parent->left == _ptr) {
-						_ptr = _ptr->parent;
-						_previous_ptr = _ptr;
-					if (_ptr->left == _endNode) //<- On en a tester les _ptr
-//std::cout << RED << "TEST2::b" << RESET << std::endl;
-						return (*this);
-					}
-					else if (_ptr->parent && _ptr->parent->right == _ptr)
-					{
-//std::cout << RED << "TEST2::c" << RESET << std::endl;
-						while (_ptr->parent && _ptr->parent->right == _ptr )
-						{
-							_ptr = _ptr->parent;
-							_previous_ptr = _ptr;
-						}
-						if (_ptr->parent && _ptr->parent->left == _ptr) {						
-							_ptr = _ptr->parent;
-							_previous_ptr = _ptr;
-						}
-						return (*this);
-					}
-				}
-// POUR REMONTER DE TOUS LES NOEUDS DE DROITE
-				else if (!_ptr->right) {
-//std::cout << RED << "TEST3" << RESET << std::endl;
-					while (_ptr->parent != NULL && _ptr->parent->right == _ptr) {
-						_previous_ptr = _ptr;
-						_ptr = _ptr->parent;
-					}
-// JUSQU'AU BOUT...Si nécessaire
-						if (_ptr->parent && (_ptr = _ptr->parent))
-							return (*this);
-						else {
-							_ptr = _ptr->parent;
-							return (*this);
-						}
-				}
-			}
-//std::cout << RED << "TEST5 : Return sans rien faire, _ptr->right : " << _ptr->right << RESET << std::endl;
-			return (*this);
-		} */
     iterator& operator++() {
         // std::cout << /* "ds op++ root-data " << _ptr->data <<  */", root/baseRoot ptr : " <<   _ptr << "/" << *_baseRoot << std::endl;
 		if (!_ptr) {
@@ -333,21 +260,143 @@ struct s_tree
 				_baseRoot = i._baseRoot;
 			}
 			return *this;
-		} // <- Le = est foireux
+		}
 		iterator& operator+=( map_iterator & i ) {_ptr += (size_t)i._ptr; return *this;}
 		iterator operator+( iterator & i ) {iterator copie(_ptr); copie += i; return (copie);}
 		iterator& operator-=( map_iterator & i ) {_ptr -= (size_t)i._ptr; return *this;}
 		iterator operator-( iterator & i ) {iterator copie(_ptr); copie -= i; return (copie);}
-/* 		friend bool operator== (const map_iterator& a, const map_iterator& b) { return a._ptr == b._ptr; }; //ORIGINAL
-		friend bool operator!= (const map_iterator& a, const map_iterator& b) { return a._ptr != b._ptr; }; */
-		bool operator!=(iterator b) { if (this->_ptr != b._ptr && *this->_baseRoot) return true; return false;};
-		bool operator==(iterator b) { if (*this != b) return false; return true;};
+		bool operator!=(const iterator &b) const { return (this->_ptr != b._ptr && *this->_baseRoot); };
+		bool operator==(const iterator &b) const { return (*this != b);};
 
 	    // private:
 			node_pointer  _ptr;
 			nodeDBptr _baseRoot;
+			value_type _endPoint;
 			
 	}; 
+
+ template <typename Iterator>
+  class map_reverse_iterator {
+   public:
+    typedef map_reverse_iterator    self;
+    typedef Iterator            iterator_type;
+
+    typedef typename iterator_traits<iterator_type>::iterator_category iterator_category;
+    typedef typename iterator_traits<iterator_type>::value_type        value_type;
+    typedef typename iterator_traits<iterator_type>::pointer           pointer;
+    typedef typename iterator_traits<iterator_type>::reference         reference;
+    typedef typename iterator_traits<iterator_type>::difference_type   difference_type;
+
+    map_reverse_iterator() : it_() {
+		#ifdef debug
+			std::cout << "iterator_map default constructor" << std::endl;
+		#endif
+	};
+    map_reverse_iterator(const iterator_type copy) : it_(copy) {
+		#ifdef debug
+			std::cout << "reverse_iterator_map Parametric constructor(1)" << std::endl;
+		#endif
+	};
+
+    template <typename It>
+    map_reverse_iterator(const map_reverse_iterator<It> &copy) : it_(copy.base()) {
+		#ifdef debug
+			std::cout << "reverse_iterator_map Parametric constructor(2)" << std::endl;
+		#endif
+	};
+
+    virtual ~map_reverse_iterator() {};
+
+    template <class It>
+		self &operator=(const map_reverse_iterator<It>& other) {
+			this->it_ = other.base();
+			return *this;
+		}
+
+    iterator_type base() const {
+      return it_;
+    }
+
+    self     &operator ++ () {
+      --it_;
+      return *this;
+    };
+    self     operator ++ (int) {
+      self tmp = *this;
+      --it_;
+      return tmp;
+    };
+    self     &operator -- () {
+      ++it_;
+      return *this;
+    };
+    self     operator -- (int) {
+      self tmp = *this;
+      ++it_;
+      return tmp;
+    };
+    self     operator + (difference_type n) const {
+      map_reverse_iterator tmp(*this);
+      tmp.it_ -= n;
+      return tmp;
+    };
+    self     operator += (difference_type n) {
+      it_ = it_ - n;
+      return *this;
+    };
+    self     operator - (difference_type n) const {
+      map_reverse_iterator tmp(*this);
+      tmp.it_ += n;
+      return tmp;
+    };
+    self     operator -= (difference_type n) {
+      it_ = it_ + n;
+      return *this;
+    };
+    reference     operator [] (difference_type n) const {
+      return *(*this + n);
+    };
+
+    reference operator * () const {
+      iterator_type tmp = it_;
+      return *--tmp;
+    };
+    pointer   operator -> () const {
+      iterator_type tmp = it_;
+      return &*--tmp;
+    };
+
+    template <class It>
+    difference_type     operator - (const map_reverse_iterator<It> &x) {
+      return x.base().operator-(it_);;
+    };
+
+    friend map_reverse_iterator	operator+(difference_type n, const map_reverse_iterator &rhs) {
+      return rhs + n;
+    };
+
+    template <class It>
+    bool	operator==(const map_reverse_iterator<It> &rhs) const { return it_ == rhs.base(); };
+
+    template <class It>
+    bool	operator!=(const map_reverse_iterator<It> &rhs) const { return it_ != rhs.base(); };
+
+    template <class It>
+    bool	operator<(const map_reverse_iterator<It> &rhs) const { return it_ > rhs.base(); };
+
+    template <class It>
+    bool	operator>(const map_reverse_iterator<It> &rhs) const { return it_ < rhs.base(); };
+
+    template <class It>
+    bool	operator<=(const map_reverse_iterator<It> &rhs) const { return it_ >= rhs.base(); };
+
+    template <class It>
+    bool	operator>=(const map_reverse_iterator<It> &rhs) const { return it_ <= rhs.base(); };
+
+   private:
+    iterator_type it_;
+  };
+
 }
 
 #endif

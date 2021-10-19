@@ -48,16 +48,20 @@ int is_equal(T1& lhs, T2& rhs, std::string str)
 	(void)rhs;(void)str;
 	int item = rand();
 #ifndef binary_out
+/* std::cout << "lhs.size() : " << lhs.size() << ", lhs.lower_bound(" << item << ")->first / second : " << lhs.lower_bound(item)->first << "/" << lhs.lower_bound(item)->second << "\n";
+std::cout << "lhs.end().first : " << lhs.end()->first << ", rhs.end().first : " << rhs.end()->first << "\n";
+std::cout << "rhs.size() : " << rhs.size() << ", rhs.lower_bound(" << item << ")->first / second : " << rhs.lower_bound(item)->first << "/" << rhs.lower_bound(item)->second << "\n";
+std::cout << (lhs.lower_bound(item)== lhs.end()) << "/" << (rhs.lower_bound(item)== rhs.end()) << "\n"; */
 	if (lhs.size() != rhs.size()) {
-		std::cout << RED "[KO] size(1) - lhs : " << lhs.size() <<  ", rhs : " << rhs.size() << RESET << std::endl; return 0;}
-	if (lhs.lower_bound(item)._ptr && lhs.lower_bound(item)->first != rhs.lower_bound(item)->first) {
-		std::cout << RED "[KO] lower_bound() - lhs : " << lhs.lower_bound(item)->first <<  ", rhs : " << rhs.lower_bound(item)->first << RESET << std::endl; return 0;}
-	if (lhs.find(item)._ptr && (lhs.find(item)->second != rhs.find(item)->second)) {
-		std::cout << RED "[KO] find() - lhs : " << lhs.find(item)->second <<  ", rhs : " << rhs.find(item)->second  << RESET << std::endl; return 0;}
+		std::cout << RED "[KO] size(1) - lhs : " << lhs.size() <<  ", rhs : " << rhs.size() << " ❌ " << str << RESET << std::endl; return 0;}
+	if (lhs.lower_bound(item)->second != rhs.lower_bound(item)->second) {
+		std::cout << RED "[KO] lower_bound() - lhs : " << lhs.lower_bound(item)->second <<  ", rhs : " << rhs.lower_bound(item)->second << " ❌ " << str << RESET << std::endl; return 0;}
+	if ((lhs.find(item)->second != rhs.find(item)->second)) {
+		std::cout << RED "[KO] find() - lhs : " << lhs.find(item)->second <<  ", rhs : " << rhs.find(item)->second  << " ❌ " << str << RESET << std::endl; return 0;}
 	if (lhs.erase(item) != rhs.erase(item)) {
-		std::cout << RED "[KO] erase() - lhs : " << lhs.erase(item) <<  ", rhs : " << rhs.erase(item) << RESET << std::endl; return 0;}
+		std::cout << RED "[KO] erase() - lhs : " << lhs.erase(item) <<  ", rhs : " << rhs.erase(item) << " ❌ " << str << RESET << std::endl; return 0;}
 	if (lhs.size() != rhs.size()) {
-		std::cout << RED "[KO] size(2) - lhs : " << lhs.size() <<  ", rhs : " << rhs.size() << RESET << std::endl; return 0;}
+		std::cout << RED "[KO] size(2) - lhs : " << lhs.size() <<  ", rhs : " << rhs.size() << " ❌ " << str << RESET << std::endl; return 0;}
 
 	typename T1::iterator T1_b_it = lhs.begin(), T1_e_it = lhs.end();
 	typename T2::iterator T2_b_it = rhs.begin(), T2_e_it = rhs.end();
@@ -177,6 +181,12 @@ void map_modifiers()
 	std::map<int, int> off_map3(off_map2.begin(), off_map2.end());
 // std::cout << "ICI !! " << map2.size() << ":" << off_map2.size() << "/" << map1.begin()->first << std::endl;
 	is_equal(map1, off_map1, "insert (1)");
+/* 	for (std::map<int, int>::iterator it = off_map2.begin(), it_end = off_map2.end(); it != it_end; ++it)
+		std::cout << "off_map first/second : " << it->first << "/" << it->second << "\n";
+	for (ft::map<int, int>::iterator it = map2.begin(), it_end = map2.end(); it != it_end; ++it)
+		std::cout << "my_map first/second : " << it->first << "/" << it->second << "\n";	
+	return ; */
+
 	is_equal(map2, off_map2, "insert (2)");
 	is_equal(map3, off_map3, "insert (3)");
 	std::cout << YELLOW "___Map Erase : [OK]" RESET << std::endl;
@@ -206,32 +216,35 @@ void map_operations()
 	// find count lower/upper_bound equal_range
 	ft::map<int, int> map1;
 	std::map<int, int> off_map1;
-	insert(&map1, &off_map1, 100);
+	insert(&map1, &off_map1, 10);
+
+for (std::map<int, int>::iterator it = off_map1.begin(), it_end = off_map1.end(); it != it_end; ++it)
+		std::cout << "off_map first/second : " << it->first << "/" << it->second << "\n";
+	for (ft::map<int, int>::iterator it = map1.begin(), it_end = map1.end(); it != it_end; ++it)
+		std::cout << "my_map first/second : " << it->first << "/" << it->second << "\n";	
 
 	std::cout << YELLOW "___Map find() count() lower/upper_bound() equal_range() : [OK]" RESET << std::endl << std::endl;
-	for (size_t i = 1; i <= 100; i++)
+	for (size_t i = 1; i <= 10; i++)
 	{
-		int item = rand() % INT32_MAX;
+		int item = rand();
 #ifndef binary_out
-		if (// fisrt is not used as if it is not found the data depends on the type
-			// map1.find(item)->first == off_map1.find(item)->first && 
-			map1.find(item)->second == off_map1.find(item)->second && 
-			map1.count(item) == off_map1.count(item)  &&
-			// map1.lower_bound(item)->first == off_map1.lower_bound(item)->first && 
-			map1.lower_bound(item)->second == off_map1.lower_bound(item)->second && 
-			// map1.upper_bound(item)->first == off_map1.upper_bound(item)->first &&
-			map1.upper_bound(item)->second == off_map1.upper_bound(item)->second && 
-			// map1.equal_range(item).first->first == off_map1.equal_range(item).first->first && 
-			map1.equal_range(item).first->second == off_map1.equal_range(item).first->second && 
-			// map1.equal_range(item).second->first == off_map1.equal_range(item).second->first && 
-			map1.equal_range(item).second->second == off_map1.equal_range(item).second->second
-			){
+		// first is not used as its data is the number of elements
+		if (map1.find(item)->second != off_map1.find(item)->second)
+			std::cout << RED "[KO] map1.find(" << item << ")->second : " << map1.find(item)->second << ", off_map1.find(" << item << ")->second : " << off_map1.find(item)->second << RESET << std::endl;
+		else if	(map1.count(item) != off_map1.count(item)  )
+			std::cout << RED "[KO] map1.count(" << item << ") : " << map1.count(item)<< ", off_map1.count(" << item << "): " << off_map1.count(item) << RESET << std::endl;
+		else if	(map1.lower_bound(item)->second != off_map1.lower_bound(item)->second )
+			std::cout << RED "[KO] map1.lower_bound(" << item << ")->second : " << map1.lower_bound(item)->second << ", off_map1.lower_bound(" << item << ")->second : " << off_map1.lower_bound(item)->second << RESET << std::endl;
+		else if	(map1.upper_bound(item)->second != off_map1.upper_bound(item)->second )
+			std::cout << RED "[KO] map1.upper_bound(" << item << ")->second : " << map1.upper_bound(item)->second << ", off_map1.upper_bound(" << item << ")->second : " << off_map1.upper_bound(item)->second << RESET << std::endl;
+		else if	(map1.equal_range(item).first->second != off_map1.equal_range(item).first->second )
+			std::cout << RED "[KO] map1.equal_range(" << item << ").first->second : " << map1.equal_range(item).first->second << ", off_map1.equal_range(" << item << ").first->second : " << off_map1.equal_range(item).first->second << RESET << std::endl;
+		else if	(map1.equal_range(item).second->second != off_map1.equal_range(item).second->second)
+			std::cout << RED "[KO] map1.equal_range(" << item << ").first->second : " << map1.equal_range(item).first->second << ", off_map1.equal_range(" << item << ").first->second : " << off_map1.equal_range(item).first->second << RESET << std::endl;
+		else {
 			std::cout << "\e[1A\e["; // remise en début de ligne pour incrémentation de compteur
 			std::cout << GREEN "row : "<< i << std::setw(46) << " ✅" RESET << std::endl;
 		}
-		else
-			std::cout << RED "[KO] map1.find(item)->first : " << map1.find(item)->first <<
-			", off_map1.find(item)->first : " << off_map1.find(item)->first << RESET << std::endl;
 #else
 	myfile << map1.find(item)->second << map1.find(item)->second << map1.count(item) << map1.lower_bound(item)->second
 	<< map1.upper_bound(item)->second << map1.equal_range(item).first->second << map1.equal_range(item).second->second;
@@ -350,7 +363,7 @@ void full_fill(T1 *map1, T2 *off_map1)
 	off_map1->insert(off_val).first;
 }
 
-/* void map_iterator()
+void map_iterator()
 {
 	ft::map<int, int> map1;
 	std::map<int, int> off_map1;
@@ -375,7 +388,10 @@ void full_fill(T1 *map1, T2 *off_map1)
 }
 	std::cout << YELLOW "Map const_iterator ✅" RESET << std::endl;
 
-	{ft::map<int, int>::reverse_iterator it = map1.rbegin(), end = map1.rend();
+	ft::map<int, int>::reverse_iterator it = map1.rbegin();
+	ft::map<int, int>::reverse_iterator end =  map1.rbegin()/*  map1.rend() */;
+	it != end;
+/* {
 	for (; it != end; it++)
 #ifdef binary_out
 	myfile << it->second << std::endl;
@@ -393,9 +409,9 @@ void full_fill(T1 *map1, T2 *off_map1)
 	std::cout << it->second << std::endl;
 #endif
 }
-	std::cout << YELLOW "Map const_revese_iterator ✅" RESET << std::endl;
+	std::cout << YELLOW "Map const_revese_iterator ✅" RESET << std::endl; */
 	return ;
-} */
+}
 
 
 void offcial_map_test();
@@ -416,12 +432,12 @@ int map_test()
 			myfile.open("mapTest_perso.txt");
 	#endif
 #endif
-	// map_constructor();
-	// map_capacity();
-	// map_acces();
-	// map_modifiers();
+	map_constructor();
+	map_capacity();
+	map_acces();
+	map_modifiers();
 	map_operations();
-	// map_iterator();
+	map_iterator();
 
 	// offcial_map_test();
 #ifdef binary_out

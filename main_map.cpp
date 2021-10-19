@@ -1,3 +1,4 @@
+// MAIN DESTINÉ A DE PETIT TEST SUR MES MAP
 #include "map.hpp"
 #include "colors.h"
 #include <utility>
@@ -7,8 +8,8 @@
 void insertTest();
 void deleteTest();
 void unitTest();
+void valueOf_mapEnd();
 using namespace std;
-
 int main() {
 
     // std::cin >> data;
@@ -34,7 +35,8 @@ int main() {
     // rbTree1.preorder();
     // insertTest();
     // deleteTest();
-    unitTest();
+    // unitTest();
+    valueOf_mapEnd();
 
 /*    std::map<int, int> test;
         std::pair<int, int> a;
@@ -428,6 +430,23 @@ void itMapping_offMap()
     " | "  << std::setw(15) << it._M_node->_M_parent << " | "  << std::setw(15) << it._M_node->_M_left <<
     " | "   << std::setw(15) << it._M_node->_M_right << "\tmain_map\n";
     return;
+}
+
+void valueOf_mapEnd()
+{
+    std::map<char, char> off_map1;
+    std::map<int, int> off_map2;
+    std::map<short, short> off_map3;
+    std::map<float, float> off_map4;
+    off_map1.insert(make_pair('a', 'a'));
+    off_map1.insert(make_pair('b', 'b'));
+    off_map2.insert(make_pair(1, 1));
+
+    std::cout << "off_map1.end(char).first/second : " << int(off_map1.end()->first) << "/" << int(off_map1.end()->second) << "\n";
+    std::cout << "off_map2.end(int).first/second : " << off_map2.end()->first << "/" << off_map2.end()->second << "\n";
+    std::cout << "off_map3.end(short).first/second : " << off_map3.end()->first << "/" << off_map3.end()->second << "\n";
+    std::cout << "off_map4.end(float).first/second : " << off_map4.end()->first << "/" << off_map4.end()->second << "\n";
+
 }
 
 /* void print2dTree(std::_Rb_tree_node_base *n, int space) {

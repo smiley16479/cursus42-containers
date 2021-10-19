@@ -55,8 +55,8 @@ namespace ft {
 
 	typedef ft::map_iterator< Key, T >				iterator;  // a bidirectional iterator to value_type convertible to const_iterator
 	typedef ft::map_iterator< Key, T, true >	const_iterator; //	a bidirectional iterator to const value_type	
-	// typedef ft::map_reverse_iterator<iterator>			reverse_iterator;
-	// typedef ft::map_reverse_iterator<const_iterator>	const_reverse_iterator;
+	typedef ft::map_reverse_iterator<iterator>			reverse_iterator;
+	typedef ft::map_reverse_iterator<const_iterator>	const_reverse_iterator;
 
 	typedef	ptrdiff_t							difference_type; //	a signed integral type, identical to: iterator_traits<iterator>::difference_type	usually the same as ptrdiff_t
 	typedef	size_t								size_type; //	an unsigned integral type that can represent any non-negative value of difference_type	usually the same as size_t
@@ -67,7 +67,7 @@ namespace ft {
 	// typedef typename ft::map< Key, T, Compare, Alloc>::pair<T1, T2> pair;
 	// typedef typename ft::map< Key, T, Compare, Alloc>::s_	
 
-// (ITERATORS:) defini ici plutot que ds map_utils.hpp car _mapTree non accessible ds map_utils
+// (ITERATORS:)
 	iterator begin() {
 		Node *n = _mapTree;
 		while (n && n->left)
@@ -83,10 +83,10 @@ namespace ft {
 	}
 	const_iterator end() const { return const_iterator(NULL, &_mapTree);}
 	/* PAS ENCORE AJUSTÉS */
-	// reverse_iterator rbegin() { return iterator(_mapTree);}
-	// const_reverse_iterator rbegin() const { return iterator(_mapTree);}
-	// reverse_iterator rend() { return iterator(_mapTree->left);}
-	// const_reverse_iterator rend() const { return iterator(_mapTree->left);}
+	reverse_iterator rbegin() {return reverse_iterator(this->end());}
+	reverse_iterator rend() { return reverse_iterator(this->begin());}
+	const_reverse_iterator rbegin() const {return const_reverse_iterator(this->end());}
+	const_reverse_iterator rend() const { return const_reverse_iterator(this->begin());}
 
 //Implemented method and // //NON implemented method
 	//  CONSTRUCTORS
@@ -184,7 +184,7 @@ namespace ft {
 	}
 
 	// Constructs a container with a copy of each of the elements in x.
-	map (const map& x) : _keyCmp(x.key_comp()), _allocTp(x.get_allocator()), _mapTree(NULL), _size(0)
+	map (const map& x) : _keyCmp(x.key_comp()), _allocTp(x.get_allocator()), _size(0), _mapTree(NULL)
 	{
 		#ifdef _DEBUG_
 			std::cout << "Map Copy Constructor" << std::endl;
@@ -443,7 +443,7 @@ template <class InputIterator>
 	}
 
 	const_iterator lower_bound (const key_type& k) const {
-		return find(k);
+		return lower_bound(k);
 	}
 
 // Returns an iterator pointing to the first element in the container whose key is considered to go after k.
@@ -453,20 +453,18 @@ template <class InputIterator>
 		iterator it_end = end();
 		while (it != it_end && key_compare()(it->first, k))
 			++it;
-		return(++it);
+		return(it);
 	}
 	const_iterator upper_bound (const key_type& k) const {
-		return ++find(k);
+		return upper_bound(k);
 	}
 
 // Returns the bounds of a range that includes all the elements in the container which have a key equivalent to k.
 	pair<const_iterator,const_iterator> equal_range (const key_type& k) const {
-		const_iterator const_it = find(k);
-		return ft::make_pair(const_it, const_it);
+		return ft::make_pair(lower_bound(k), upper_bound(k));
 	}
 	pair<iterator,iterator>             equal_range (const key_type& k) {
-		iterator it = find(k);
-		return ft::make_pair(it, it);
+		return ft::make_pair(lower_bound(k), upper_bound(k));
 	}
 
 // Returns a copy of the allocator object associated with the map.
